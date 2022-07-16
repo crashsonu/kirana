@@ -2,6 +2,7 @@
 import sys
 
 # All Custom Imports Here.
+from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 
@@ -12,27 +13,37 @@ from PySide6 import QtWidgets
 
 
 class ProductWidget(QtWidgets.QWidget):
-    product_name = ''
 
-    def __init__(self):
+    def __init__(self, product_info):
+        """Product widget to show product for add to cart or else.
+        Args:
+            product_info (dict): product info returned by the database.
+        """
         super(ProductWidget, self).__init__()
-        self._layout = QtWidgets.QVBoxLayout()
-        self.setLayout(self._layout)
-        self._layout2 = QtWidgets.QHBoxLayout()
-        self.setLayout(self._layout2)
-        self._layout.addLayout(self._layout2)
-        self._chk_box = QtWidgets.QCheckBox()
-        self._spin_box = QtWidgets.QSpinBox()
-        self._label = QtWidgets.QLabel()
+        self._product_info = product_info
 
-        self._layout2.addWidget(self._chk_box)
-        self._layout2.addWidget(self._label)
-        self._label.setText(self.product_name)
-        self._layout2.addWidget(self._spin_box)
+        self._layout = QtWidgets.QHBoxLayout()
+        self._checkbox = QtWidgets.QCheckBox()
+        self._qty_spb = QtWidgets.QSpinBox()
+
+        self._initialize()
+
+    def _initialize(self):
+        self._setup_widget()
+        self._setup_widget_connections()
+
+    def _setup_widget(self):
+        self.setLayout(self._layout)
+        self.setAttribute(QtGui.Qt.WA_StyledBackground)
+
+        self._layout.addWidget(self._checkbox)
+        self._layout.addWidget(self._qty_spb)
+
+        self._checkbox.setText(self._product_info['name'])
+
+    def _setup_widget_connections(self):
+        pass
 
 
 if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    inst = ProductWidget()
-    inst.show()
-    app.exec()
+    pass
