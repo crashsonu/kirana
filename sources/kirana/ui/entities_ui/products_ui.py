@@ -7,7 +7,7 @@ from PySide6 import QtWidgets
 
 
 # All Native Imports Here.
-
+from kirana.db.entities import get_column
 
 # All Attributes or Constants Here.
 
@@ -25,6 +25,8 @@ class ProductWidget(QtWidgets.QWidget):
         self._layout = QtWidgets.QHBoxLayout()
         self._checkbox = QtWidgets.QCheckBox()
         self._qty_spb = QtWidgets.QSpinBox()
+        self._price_label = QtWidgets.QLabel()
+        self._qty_combox = QtWidgets.QComboBox()
 
         self._initialize()
 
@@ -37,9 +39,16 @@ class ProductWidget(QtWidgets.QWidget):
         self.setAttribute(QtGui.Qt.WA_StyledBackground)
 
         self._layout.addWidget(self._checkbox)
+        self._layout.addWidget(self._price_label)
         self._layout.addWidget(self._qty_spb)
+        self._layout.addWidget(self._qty_combox)
 
         self._checkbox.setText(self._product_info['name'])
+        self._price_label.setText(f'Rs. {self._product_info["price"]}')
+
+        _quantities = get_column('units', 'name')
+        for each in _quantities:
+            self._qty_combox.addItem(each)
 
     def _setup_widget_connections(self):
         pass

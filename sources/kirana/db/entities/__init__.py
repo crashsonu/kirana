@@ -31,6 +31,31 @@ def get_table_column_names(table_name, **kwargs):
     return table_column_names
 
 
+@db_connection
+def get_field(table_name, column_name, column_value, get_column='*', **kwargs):
+    connection = kwargs.pop('connection')
+    cursor = connection.cursor()
+
+    cursor.execute(f'select {get_column} from {table_name} where {column_name} = "{column_value}"')
+    data = dict()
+    for attr, value in zip(get_table_column_names(table_name), cursor.fetchall()[0]):
+        data[attr] = value
+    get_table_column_names(table_name)
+    cursor.close()
+    return data
+
+@db_connection
+def get_column(table_name, column_name, **kwargs):
+    conn = kwargs.pop('connection')
+    cursor = conn.cursor()
+
+    cursor.execute(f'select {column_name} from {table_name}')
+    _result = list()
+    for i in cursor.fetchall():
+        _result.append(i[0])
+    return _result
+
+
 class BaseEntity:
     TABLE_NAME = ''
     COLUMN_NAME = ''
@@ -90,7 +115,8 @@ class BaseEntity:
         return self.zip_method(self.COLUMN_NAME, result)
 
     @db_connection
-    def get(self, table_name=None, **kwargs):
+    def get(self, table_name=None, return_fields=None, **kwargs):
+        print(kwargs)
         column_name = list(kwargs.keys())[0]
         column_value = list(kwargs.values())[0]
 
@@ -99,9 +125,14 @@ class BaseEntity:
 
         if table_name is not None:
             self.TABLE_NAME = table_name
-        cursor.execute(f'select * from {self.TABLE_NAME} where {column_name} = "{column_value}"')
+        if return_fields is not None:
+            cursor.execute(f'select {return_fields} from {self.TABLE_NAME} where {column_name} = "{column_value}"')
+            _result = self.zip_method(self.COLUMN_NAME, cursor.fetchall())
+            return _result
 
+        cursor.execute(f'select * from {self.TABLE_NAME} where {column_name} = "{column_value}"')
         _result = self.zip_method(self.COLUMN_NAME, cursor.fetchall())
+
         cursor.close()
         return _result
 
