@@ -44,6 +44,7 @@ def get_field(table_name, column_name, column_value, get_column='*', **kwargs):
     cursor.close()
     return data
 
+
 @db_connection
 def get_column(table_name, column_name, **kwargs):
     conn = kwargs.pop('connection')

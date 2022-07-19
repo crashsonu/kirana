@@ -5,9 +5,9 @@ import sys
 from PySide6 import QtGui
 from PySide6 import QtWidgets
 
-
 # All Native Imports Here.
 from kirana.db.entities import get_column
+
 
 # All Attributes or Constants Here.
 
@@ -30,12 +30,17 @@ class ProductWidget(QtWidgets.QWidget):
 
         self._initialize()
 
+    @property
+    def checked(self):
+        return self._checkbox.isChecked()
+
     def _initialize(self):
         self._setup_widget()
         self._setup_widget_connections()
 
     def _setup_widget(self):
         self.setLayout(self._layout)
+        self.setObjectName('ProductWidget')
         self.setAttribute(QtGui.Qt.WA_StyledBackground)
 
         self._layout.addWidget(self._checkbox)
@@ -44,14 +49,25 @@ class ProductWidget(QtWidgets.QWidget):
         self._layout.addWidget(self._qty_combox)
 
         self._checkbox.setText(self._product_info['name'])
-        self._price_label.setText(f'Rs. {self._product_info["price"]}')
+        self._checkbox.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+
+        # setting price by quantity
+        self._qty_spb.setValue(1)
+
+        pro_price = self._product_info["price"]
+        self._price_label.setText(f'Rs. {pro_price}')
 
         _quantities = get_column('units', 'name')
         for each in _quantities:
             self._qty_combox.addItem(each)
 
+    def _spb_value(self):
+        spb_current_value = self._qty_spb.value()
+        pro_price = spb_current_value * self._product_info['price']
+        self._price_label.setText(f'Rs. {pro_price}')
+
     def _setup_widget_connections(self):
-        pass
+        self._qty_spb.valueChanged.connect(self._spb_value)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,39 @@
+QWidget {
+    background-color: #7158e2;
+}
+
+QWidget#ProductWidget {
+    background: transparent;
+}
+
+QCheckBox {
+    background: transparent;
+    spacing: 5px;
+}
+
+QCheckBox::indicator {
+    width: 20px;
+    height: 20px;
+}
+
+QCheckBox::indicator:checked {
+    background: transparent;
+    border-image: url(<image_dir>/icons8-check-circle-48.png);
+}
+
+QCheckBox::indicator:unchecked {
+    background: transparent;
+    border-image: url(<image_dir>/icons8-multiply-64.png);
+}
+
+QListWidget::item {
+     border-style: solid;
+     border-width: 1px;
+     border-color: black;
+     border-radius: 15px;
+     background-color: #18dcff;
+}
+
+QLabel {
+    background: transparent;
+}
