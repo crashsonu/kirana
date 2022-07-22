@@ -6,8 +6,7 @@ from PySide6 import QtGui
 from PySide6 import QtWidgets
 
 # All Native Imports Here.
-from kirana.db.entities import get_field
-
+from kirana.db.entities.units import Unit
 
 # All Attributes or Constants Here.
 
@@ -39,17 +38,7 @@ class ProductWidget(QtWidgets.QWidget):
     def checked(self):
         return self._checkbox.isChecked()
 
-    @property
-    def quantity(self):
-        return self._qty_spb.value()
 
-    @property
-    def unit(self):
-        return self.qty_label['id']
-
-    @property
-    def price(self):
-        return self.pro_price
 
     def _initialize(self):
         self._setup_widget()
@@ -71,21 +60,25 @@ class ProductWidget(QtWidgets.QWidget):
 
         # setting price by quantity initial 1.
         self._qty_spb.setValue(1)
-        self.pro_price = self._product_info["price"]
-        self._price_label.setText(f'Rs. {self.pro_price}')
+        self.pro_price_init = self._product_info["price"]
+        self._price_label.setText(f'Rs. {self.pro_price_init}')
 
         # setting unit like KG for product.
-        self.qty_label = get_field('units', 'id', self._product_info['unit_id'], get_column='name')
-        self._qty_label.setText(self.qty_label['id'])
-
+        self.qty_label = Unit().get(return_fields='name', id=self._product_info['unit_id'])
+        self._qty_label.setText(self.qty_label)
         # setting GST label initial given.
         _product_gst = self._product_info['gst']
         self._gst_label.setText(f'{_product_gst}% gst')
 
+
     def _spb_value(self):
         spb_current_value = self._qty_spb.value()
-        self.pro_price = spb_current_value * self._product_info['price']
-        self._price_label.setText(f'Rs. {self.pro_price}')
+        self.prod_price = spb_current_value * self.pro_price_init
+        self._price_label.setText(f'Rs. {self.prod_price}')
+        self._product_info['Quantity'] = spb_current_value
+        self._product_info['unit'] = self.qty_label
+        self._product_info['price'] = self.prod_price
+        return spb_current_value
 
     def _setup_widget_connections(self):
         self._qty_spb.valueChanged.connect(self._spb_value)

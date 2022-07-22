@@ -9,8 +9,8 @@ from PySide6 import QtWidgets
 from kirana.db import db_connection
 from kirana.ui import get_stylesheet
 from kirana.ui.entities_ui import products_ui
-from kirana.db.entities import get_field
-from kirana.db.entities import BaseEntity
+from kirana.db.entities.products import Products
+from kirana.db.entities.customers import Customer
 
 
 # All Attributes or Constants Here.
@@ -79,13 +79,14 @@ class Window(QtWidgets.QDialog):
         self._products_lw.setSpacing(2)
 
     def _setup_widget_connection(self):
+        pass
         self._add_cart_btn.clicked.connect(self._on_add_cart)
         self._place_order_btn.clicked.connect(self._on_place_order)
         self._customer_verify_button.clicked.connect(self._on_verify_me)
         self._clear_cart_btn.clicked.connect(self._on_clear_cart)
 
     def add_all_products(self):
-        all_products = BaseEntity().all(table_name='products')
+        all_products = Products().all()
         for each in all_products:
             product_widget = products_ui.ProductWidget(each)
             lwi = QtWidgets.QListWidgetItem()
@@ -106,16 +107,12 @@ class Window(QtWidgets.QDialog):
             _prod_info = wid.product_info
             _info_to_add_cart = dict()
             if wid.checked:
-                qty_unit = wid.unit
-                prod_qty = wid.quantity
-                _prod_info['Quantity'] = prod_qty
-                _prod_info['price'] = wid.price
                 pro_gst = round(_prod_info['price']) * round(_prod_info['gst']) / 100
                 pro_total = _prod_info['price'] + pro_gst
                 self.gra_total += pro_total
 
                 _info_to_add_cart['name'] = _prod_info['name']
-                _info_to_add_cart['quantity'] = f"{prod_qty} {qty_unit}"
+                _info_to_add_cart['quantity'] = f"{_prod_info['Quantity']} {_prod_info['unit']}"
                 _info_to_add_cart['price'] = f'Rs. {_prod_info["price"]}'
                 _info_to_add_cart['total_gst'] = f'Rs. {round(pro_gst, 1)}'
                 _info_to_add_cart['total'] = f"Rs. {round(pro_total, 1)}"
@@ -144,7 +141,7 @@ class Window(QtWidgets.QDialog):
 
     def _on_verify_me(self):
         self._phone_number = self._customer_verify.text()
-        self._customer_id = get_field('customers', 'mobile', self._phone_number, 'id')
+        self._customer_id = Customer().get(return_fields='id', mobile=self._phone_number)
         if len(self._phone_number) == 0:
             print('Please verify Yourself, to Place an Order.')
             return

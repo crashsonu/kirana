@@ -2,7 +2,6 @@
 
 # All Custom Imports Here.
 from kirana.db.entities import BaseEntity
-from kirana.db.entities import get_table_column_names
 
 
 # All Native Imports Here.
@@ -12,7 +11,7 @@ from kirana.db.entities import get_table_column_names
 
 class Products(BaseEntity):
     TABLE_NAME = 'products'
-    COLUMN_NAME = get_table_column_names(TABLE_NAME)
+    COLUMN_NAME = BaseEntity().get_all_column_names(table_name=TABLE_NAME)
 
     def __init__(self):
         super(Products, self).__init__()
