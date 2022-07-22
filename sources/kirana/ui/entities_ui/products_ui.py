@@ -32,6 +32,10 @@ class ProductWidget(QtWidgets.QWidget):
         self._initialize()
 
     @property
+    def product_info(self):
+        return self._product_info
+
+    @property
     def checked(self):
         return self._checkbox.isChecked()
 

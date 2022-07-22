@@ -8,10 +8,9 @@ from PySide6 import QtWidgets
 # All Native Imports Here.
 from kirana.db import db_connection
 from kirana.ui import get_stylesheet
-from kirana.db.entities.orders import Order
 from kirana.ui.entities_ui import products_ui
-from kirana.db.entities.products import Products
 from kirana.db.entities import get_field
+from kirana.db.entities import BaseEntity
 
 
 # All Attributes or Constants Here.
@@ -25,13 +24,8 @@ class Window(QtWidgets.QDialog):
         self._add_cart_layout = QtWidgets.QVBoxLayout()
 
         # add category widgets
-        self._category_layout = QtWidgets.QHBoxLayout()
-        self._category_label = QtWidgets.QLabel('Select Category')
-        self._category_combox = QtWidgets.QComboBox()
-        self._category_search_btn = QtWidgets.QPushButton('Search Products')
-
+        self._category_label = QtWidgets.QLabel('All Products')
         self._products_lw = QtWidgets.QListWidget()
-
         self._add_cart_btn = QtWidgets.QPushButton('Add Products To Cart')
 
         # cart widget
@@ -53,7 +47,7 @@ class Window(QtWidgets.QDialog):
         self._setup_widget()
         self._setup_widget_connection()
 
-        self.add_categories()
+        self.add_all_products()
         self.apply_stylesheet()
 
     def _setup_widget(self):
@@ -62,12 +56,9 @@ class Window(QtWidgets.QDialog):
         self._layout.addLayout(self._layout2)
         self.setLayout(self._layout2)
         self._layout2.addLayout(self._add_cart_layout)
-        self._add_cart_layout.addLayout(self._category_layout)
 
         # setting up select category and add products list
-        self._category_layout.addWidget(self._category_label)
-        self._category_layout.addWidget(self._category_combox)
-        self._category_layout.addWidget(self._category_search_btn)
+        self._add_cart_layout.addWidget(self._category_label)
 
         self._add_cart_layout.addWidget(self._products_lw)
 
@@ -88,25 +79,14 @@ class Window(QtWidgets.QDialog):
         self._products_lw.setSpacing(2)
 
     def _setup_widget_connection(self):
-        self._category_search_btn.clicked.connect(self._on_category_searched)
         self._add_cart_btn.clicked.connect(self._on_add_cart)
         self._place_order_btn.clicked.connect(self._on_place_order)
         self._customer_verify_button.clicked.connect(self._on_verify_me)
+        self._clear_cart_btn.clicked.connect(self._on_clear_cart)
 
-    def add_categories(self):
-        _categories = Order.get_column(table_name='products_category', column_name='name')
-        for each in _categories:
-            self._category_combox.addItem(each)
-
-    def _on_category_searched(self):
-        self._products_lw.clear()
-
-        category = self._category_combox.currentText()
-        catagory_id = Order.get('products_category', 'name', category, get_column='id')
-        _id = catagory_id.get('id')
-        _products = Products().filter(category_id=_id)
-        # add widget to QListWidget
-        for each in _products:
+    def add_all_products(self):
+        all_products = BaseEntity().all(table_name='products')
+        for each in all_products:
             product_widget = products_ui.ProductWidget(each)
             lwi = QtWidgets.QListWidgetItem()
             lwi.setSizeHint(product_widget.sizeHint())
@@ -122,8 +102,8 @@ class Window(QtWidgets.QDialog):
 
         for i in range(self._products_lw.count()):
             item = self._products_lw.item(i)
-            wid = self._products_lw.itemWidget(item)
-            _prod_info = wid._product_info
+            wid = self._products_lw.itemWidget(item)  # type:#product_ui.ProductWidget
+            _prod_info = wid.product_info
             _info_to_add_cart = dict()
             if wid.checked:
                 qty_unit = wid.unit
@@ -135,10 +115,10 @@ class Window(QtWidgets.QDialog):
                 self.gra_total += pro_total
 
                 _info_to_add_cart['name'] = _prod_info['name']
-                _info_to_add_cart['quantity'] = f"{prod_qty}{qty_unit}"
-                _info_to_add_cart['price'] = f'{_prod_info["price"]}'
-                _info_to_add_cart['total_gst'] = f'{pro_gst}'
-                _info_to_add_cart['total'] = f"{pro_total}"
+                _info_to_add_cart['quantity'] = f"{prod_qty} {qty_unit}"
+                _info_to_add_cart['price'] = f'Rs. {_prod_info["price"]}'
+                _info_to_add_cart['total_gst'] = f'Rs. {round(pro_gst, 1)}'
+                _info_to_add_cart['total'] = f"Rs. {round(pro_total, 1)}"
                 products_in_cart.append(_info_to_add_cart)
 
                 self.place_order_pro_info.append(_prod_info)
@@ -146,7 +126,7 @@ class Window(QtWidgets.QDialog):
         self._cart_tw.setRowCount(row_count)
         self._cart_tw.setColumnCount(5)
         self._cart_tw.setHorizontalHeaderLabels(["Product", "Quantity", "Price", "GST", "Total"])
-        self._grand_total_label.setText(f"GRAND TOTAL : Rs. {round(self.gra_total)}")
+        self._grand_total_label.setText(f"GRAND TOTAL : Rs. {round(self.gra_total, 1)}")
 
         for i in range(row_count):
             name = QtWidgets.QTableWidgetItem(products_in_cart[i]['name'])
@@ -165,8 +145,13 @@ class Window(QtWidgets.QDialog):
     def _on_verify_me(self):
         self._phone_number = self._customer_verify.text()
         self._customer_id = get_field('customers', 'mobile', self._phone_number, 'id')
+        if len(self._phone_number) == 0:
+            print('Please verify Yourself, to Place an Order.')
+            return
         if len(self._phone_number) != 10:
             print('Please enter valid Phone Number.')
+            return
+
         return self._customer_id['id']
 
     @db_connection
@@ -179,6 +164,9 @@ class Window(QtWidgets.QDialog):
         for each in product_info:
             products_dict[each['id']] = each['Quantity']
         customer_id = self._on_verify_me()
+        if customer_id is None:
+            return
+
         ordered_on = datetime.now()
         # products dict in json
         products_dict_json = dict()
@@ -192,6 +180,10 @@ class Window(QtWidgets.QDialog):
         cursor.execute(msg, values)
         connection.commit()
         print('Order placed successfully.')
+
+    def _on_clear_cart(self):
+        self._cart_tw.setRowCount(0)
+        self._grand_total_label.setText('GRAND TOTAL : Rs. 0')
 
     def apply_stylesheet(self):
         self.setStyleSheet(get_stylesheet('stylesheet'))

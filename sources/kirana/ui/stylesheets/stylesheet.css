@@ -1,9 +1,19 @@
 QWidget {
-    background-color: #7158e2;
+    background-color: #FFFFFF;
 }
 
 QWidget#ProductWidget {
     background: transparent;
+}
+
+QPushButton {
+    background: #1abc9c;
+    border: 1px solid transparent;
+    border-radius: 7px;padding: 5px 15px 2px 5px;
+    color: #ffffff;
+    font: bold;
+    width: 100px;
+    height: 25px;
 }
 
 QCheckBox {
@@ -28,10 +38,11 @@ QCheckBox::indicator:unchecked {
 
 QListWidget::item {
      border-style: solid;
-     border-width: 1px;
-     border-color: black;
+     border-width: .5px;
+     border-color: #bdc3c7;
      border-radius: 15px;
-     background-color: #18dcff;
+     background-color: #ffffff;
+
 }
 
 QLabel {
@@ -39,11 +50,11 @@ QLabel {
 }
 
 
-
 QHeaderView::section {
-    background-color: #0be881;
-    padding: 3px;
-    font-size: 8pt;
+    background-color: #95a5a6;
+    padding: 5px;
+    font-size: 10pt;
+    width: 92px;
     border-style: none;
     border-bottom: 1px solid #fffff8;
     border-right: 1px solid #fffff8;

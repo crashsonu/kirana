@@ -75,7 +75,7 @@ class BaseEntity:
         return result
 
     @db_connection
-    def all(self, **kwargs):
+    def all(self, table_name=None, **kwargs):
         """Get all customers from database
         Returns:
             (list): returns the list of dictionaries of customers.
@@ -84,12 +84,22 @@ class BaseEntity:
         cursor = conn.cursor()
 
         table_data = list()
-        cursor.execute(f'select * from {self.TABLE_NAME}')
-        for each in cursor.fetchall():
-            table_data.append(each)
+        if not table_name:
+            cursor.execute(f'select * from {self.TABLE_NAME}')
+            for each in cursor.fetchall():
+                table_data.append(each)
 
-        # zipping customer details with columns.
-        return self.zip_method(self.COLUMN_NAME, table_data)
+            # zipping customer details with columns.
+            return self.zip_method(self.COLUMN_NAME, table_data)
+
+        else:
+            cursor.execute(f'select * from {table_name}')
+            for each in cursor.fetchall():
+                table_data.append(each)
+
+            # zipping customer details with columns.
+            return self.zip_method(get_table_column_names(table_name), table_data)
+
 
     @db_connection
     def filter(self, **kwargs):
