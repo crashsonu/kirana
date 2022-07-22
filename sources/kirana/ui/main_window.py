@@ -103,7 +103,7 @@ class Window(QtWidgets.QDialog):
 
         for i in range(self._products_lw.count()):
             item = self._products_lw.item(i)
-            wid = self._products_lw.itemWidget(item)  # type:#product_ui.ProductWidget
+            wid = self._products_lw.itemWidget(item)
             _prod_info = wid.product_info
             _info_to_add_cart = dict()
             if wid.checked:
@@ -149,7 +149,7 @@ class Window(QtWidgets.QDialog):
             print('Please enter valid Phone Number.')
             return
 
-        return self._customer_id['id']
+        return self._customer_id
 
     @db_connection
     def _on_place_order(self, **kwargs):
