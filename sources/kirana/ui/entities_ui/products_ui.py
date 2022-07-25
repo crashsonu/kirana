@@ -1,5 +1,4 @@
 # All Python Built-in Imports Here.
-import sys
 
 # All Custom Imports Here.
 from PySide6 import QtGui
@@ -7,6 +6,7 @@ from PySide6 import QtWidgets
 
 # All Native Imports Here.
 from kirana.db.entities.units import Unit
+
 
 # All Attributes or Constants Here.
 
@@ -25,8 +25,10 @@ class ProductWidget(QtWidgets.QWidget):
         self._checkbox = QtWidgets.QCheckBox()
         self._qty_spb = QtWidgets.QSpinBox()
         self._price_label = QtWidgets.QLabel()
-        self._qty_label = QtWidgets.QLabel()
+        self._unit_label = QtWidgets.QLabel()
         self._gst_label = QtWidgets.QLabel()
+
+        self.checked_product_list = list()
 
         self._initialize()
 
@@ -37,8 +39,6 @@ class ProductWidget(QtWidgets.QWidget):
     @property
     def checked(self):
         return self._checkbox.isChecked()
-
-
 
     def _initialize(self):
         self._setup_widget()
@@ -52,7 +52,7 @@ class ProductWidget(QtWidgets.QWidget):
         self._layout.addWidget(self._checkbox)
         self._layout.addWidget(self._price_label)
         self._layout.addWidget(self._qty_spb)
-        self._layout.addWidget(self._qty_label)
+        self._layout.addWidget(self._unit_label)
         self._layout.addWidget(self._gst_label)
 
         self._checkbox.setText(self._product_info['name'])
@@ -65,23 +65,47 @@ class ProductWidget(QtWidgets.QWidget):
 
         # setting unit like KG for product.
         self.qty_label = Unit().get(return_fields='name', id=self._product_info['unit_id'])
-        self._qty_label.setText(self.qty_label)
+        self._unit_label.setText(self.qty_label)
         # setting GST label initial given.
         _product_gst = self._product_info['gst']
         self._gst_label.setText(f'{_product_gst}% gst')
 
+    def _setup_widget_connections(self):
+        self._qty_spb.valueChanged.connect(self._on_change_quantity)
 
-    def _spb_value(self):
+    def _on_change_quantity(self):
         spb_current_value = self._qty_spb.value()
         self.prod_price = spb_current_value * self.pro_price_init
         self._price_label.setText(f'Rs. {self.prod_price}')
-        self._product_info['Quantity'] = spb_current_value
-        self._product_info['unit'] = self.qty_label
-        self._product_info['price'] = self.prod_price
-        return spb_current_value
 
-    def _setup_widget_connections(self):
-        self._qty_spb.valueChanged.connect(self._spb_value)
+    def get_for_cart(self):
+        id_ = self._product_info.get('id')
+        name = self._product_info.get('name')
+        category_id = self._product_info.get('category_id')
+        price = self._product_info.get('price')
+        gst = self._product_info.get('gst')
+        size = self._product_info.get('size')
+        unit_id = self._product_info.get('unit_id')
+        unit_name = Unit().get(id=unit_id)[0]['name']
+
+        result = dict()
+        result.update(id=id_, name=name, category_id=category_id, price=price,
+                      size=size, gst_percent=gst, unit_id=unit_id, unit_name=unit_name)
+
+        quantity = self._qty_spb.value()
+        result.update(quantity=quantity)
+
+        total = price * quantity
+        result.update(total=total)
+
+        gst_price = (total / 100) * gst
+        result.update(gst=gst_price)
+
+        result.update(grand_total=total + gst_price)
+        self.checked_product_list.append(result)
+
+        return result
+
 
 
 if __name__ == '__main__':
