@@ -6,8 +6,8 @@ import os
 # All Native Imports Here.
 
 # All Attributes or Constants Here.
-IMAGES_PATH = os.path.join(os.path.dirname(__file__), 'images')
-STYLESHEETS_PATH = os.path.join(os.path.dirname(__file__), 'stylesheets')
+IMAGES_PATH = os.path.join(os.path.dirname(__file__), 'images').replace('\\', '/')
+STYLESHEETS_PATH = os.path.join(os.path.dirname(__file__), 'stylesheets').replace('\\', '/')
 
 
 def get_stylesheet(stylesheet_name):

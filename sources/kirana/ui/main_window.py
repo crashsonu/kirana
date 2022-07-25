@@ -3,6 +3,7 @@ import sys
 from datetime import datetime
 
 # All Custom Imports Here.
+from PySide6 import QtCore
 from PySide6 import QtWidgets
 
 # All Native Imports Here.
@@ -121,6 +122,7 @@ class Window(QtWidgets.QDialog):
         self._cart_btn_layout.addWidget(self._clear_cart_btn)
 
         self._products_lw.setSpacing(2)
+        self.setWindowState(QtCore.Qt.WindowMaximized)
 
     def _setup_widget_connection(self):
         pass
