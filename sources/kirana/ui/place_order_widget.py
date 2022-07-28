@@ -58,9 +58,9 @@ class CartTableWidget(QtWidgets.QTableWidget):
         pass
 
 
-class Window(QtWidgets.QDialog):
+class OrderWidget(QtWidgets.QDialog):
     def __init__(self):
-        super(Window, self).__init__()
+        super(OrderWidget, self).__init__()
         self._layout = QtWidgets.QVBoxLayout()
         self._layout2 = QtWidgets.QHBoxLayout()
         self._add_cart_layout = QtWidgets.QVBoxLayout()
@@ -201,9 +201,4 @@ class Window(QtWidgets.QDialog):
         self.setStyleSheet(get_stylesheet('stylesheet'))
 
 
-if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    inst = Window()
-    root = QtWidgets.QWidget()
-    inst.show()
-    app.exec()
+

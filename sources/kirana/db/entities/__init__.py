@@ -60,19 +60,8 @@ class BaseEntity:
         cursor.close()
         return data
 
-    # @db_connection
-    # def get_column(self, table_name, column_name, **kwargs):
-    #     conn = kwargs.pop('connection')
-    #     cursor = conn.cursor()
-    #
-    #     cursor.execute(f'select {column_name} from {table_name}')
-    #     _result = list()
-    #     for i in cursor.fetchall():
-    #         _result.append(i[0])
-    #     return _result
-
     @db_connection
-    def all(self, column_name=None, ** kwargs):
+    def all(self, column_name=None, **kwargs):
         """
         returns all table data with their columns names row in table is a dict.
         Args:
@@ -98,7 +87,7 @@ class BaseEntity:
         else:
             cursor.execute(f'select {column_name} from {self.TABLE_NAME}')
             for each in cursor.fetchall():
-                table_data.append(each)
+                table_data.append(each[0])
             return table_data
 
     @db_connection
@@ -142,6 +131,31 @@ class BaseEntity:
 
         cursor.close()
         return _result
+
+    @db_connection
+    def insert(self, values_ls, **kwargs):
+        connection = kwargs.pop('connection')
+        cursor = connection.cursor()
+
+        table_columns = self.get_all_column_names(self.TABLE_NAME)
+        table_columns.pop(0)
+        columns = ', '.join(map(str, table_columns))
+        _str = ('%s, ' * len(table_columns)).strip(', ')
+
+        msg = f"insert into {self.TABLE_NAME}({columns}) values({_str})"
+        cursor.execute(msg, values_ls)
+        print('inserted!!')
+        connection.commit()
+
+    @db_connection
+    def delete(self, product_id, **kwargs):
+        connection = kwargs.pop('connection')
+        cursor = connection.cursor()
+
+        msg = f'delete from {self.TABLE_NAME} where id = "{product_id}"'
+        cursor.execute(msg)
+        connection.commit()
+        print('deleted!!')
 
 
 if __name__ == '__main__':
