@@ -185,8 +185,9 @@ class ModifyProducts(QtWidgets.QDialog):
 
 
 if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    inst = ModifyProducts()
-    root = QtWidgets.QWidget()
-    inst.show()
-    app.exec()
+    pass
+    # app = QtWidgets.QApplication(sys.argv)
+    # inst = ModifyProducts()
+    # root = QtWidgets.QWidget()
+    # inst.show()
+    # app.exec()

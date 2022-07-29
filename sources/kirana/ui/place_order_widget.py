@@ -5,6 +5,7 @@ from datetime import datetime
 # All Custom Imports Here.
 from PySide6 import QtCore
 from PySide6 import QtWidgets
+from PySide6.QtWidgets import *
 
 # All Native Imports Here.
 from kirana.db import db_connection
@@ -12,6 +13,8 @@ from kirana.ui import get_stylesheet
 from kirana.ui.entities_ui import products_ui
 from kirana.db.entities.products import Products
 from kirana.db.entities.customers import Customer
+from kirana.ui import register_user
+from kirana.ui import prompts
 
 
 # All Attributes or Constants Here.
@@ -38,7 +41,7 @@ class CartTableWidget(QtWidgets.QTableWidget):
         for each in self.product_data_list:
             total_cart_value += each['grand_total']
 
-        return total_cart_value
+        return round(total_cart_value, 2)
 
     def add_product(self, data):
         row = self.rowCount()
@@ -128,6 +131,7 @@ class OrderWidget(QtWidgets.QDialog):
         pass
         self._add_cart_btn.clicked.connect(self._on_add_cart)
         self._place_order_btn.clicked.connect(self._on_place_order)
+        self._place_order_btn.clicked.connect(prompts.order_placed)
         self._customer_verify_button.clicked.connect(self._on_verify_me)
         self._clear_cart_btn.clicked.connect(self._on_clear_cart)
 
@@ -156,6 +160,15 @@ class OrderWidget(QtWidgets.QDialog):
 
     def _on_verify_me(self):
         self._phone_number = self._customer_verify.text()
+        _phone_number = int(self._phone_number)
+        existing_phone_numbers = Customer().all(column_name='mobile')
+        if len(self._phone_number) == 10 and self._phone_number not in existing_phone_numbers:
+            w = register_user.UserRegister(phone_number=self._phone_number)
+            w.show()
+            w.exec()
+            customer_id = Customer().get(return_fields='id', mobile=self._phone_number)
+            return customer_id
+
         self._customer_id = Customer().get(return_fields='id', mobile=self._phone_number)
         if len(self._phone_number) == 0:
             print('Please verify Yourself, to Place an Order.')
@@ -163,7 +176,7 @@ class OrderWidget(QtWidgets.QDialog):
         if len(self._phone_number) != 10:
             print('Please enter valid Phone Number.')
             return
-
+        self._customer_verify_button.clicked.connect(prompts.customer_verified)
         return self._customer_id
 
     @db_connection

@@ -6,6 +6,7 @@ import sys
 from PySide6 import QtWidgets
 from PySide6 import QtCore
 from kirana.ui import place_order_widget
+from kirana.ui import modify_products
 
 from kirana.ui.entities_ui import products_ui
 
@@ -20,6 +21,7 @@ class WindowKiranaManager(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
         self._place_order_wid = place_order_widget.OrderWidget()
+        self._modification_wid = modify_products.ModifyProducts()
         self._layout = QtWidgets.QVBoxLayout()
         self.tab_widget = QtWidgets.QTabWidget()
 
@@ -32,7 +34,8 @@ class WindowKiranaManager(QtWidgets.QDialog):
     def _setup_ui(self):
         self.setLayout(self._layout)
         self._layout.addWidget(self.tab_widget)
-        self.tab_widget.addTab(self._place_order_wid, 'Order')
+        self.tab_widget.addTab(self._modification_wid, 'ADD OR DELETE Product')
+        self.tab_widget.addTab(self._place_order_wid, 'PLACE ORDER')
         self.setWindowState(QtCore.Qt.WindowMaximized)
 
     def _setup_connections(self):

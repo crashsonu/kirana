@@ -95,17 +95,16 @@ class ProductWidget(QtWidgets.QWidget):
         quantity = self._qty_spb.value()
         result.update(quantity=quantity)
 
-        total = price * quantity
+        total = round(price * quantity, 1)
         result.update(total=total)
 
-        gst_price = (total / 100) * gst
+        gst_price = round((total / 100) * gst, 1)
         result.update(gst=gst_price)
 
         result.update(grand_total=total + gst_price)
         self.checked_product_list.append(result)
 
         return result
-
 
 
 if __name__ == '__main__':
