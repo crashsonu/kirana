@@ -114,21 +114,6 @@ class BaseEntity:
         return self.zip_method(self.COLUMN_NAME, result)
 
     @db_connection
-    def filter2(self, **kwargs):
-        conn = kwargs.pop('connection')
-        cursor = conn.cursor()
-        result = list()
-
-        name = list(kwargs.values())[0]
-        msg = f'select * from {self.TABLE_NAME} where name LIKE "%{name}%"'
-        cursor.execute(msg)
-        data = cursor.fetchall()
-        for each in data:
-            result.append(each)
-
-        return result[0]
-
-    @db_connection
     def get(self, return_fields=None, **kwargs):
         connection = kwargs.pop('connection')
         cursor = connection.cursor()

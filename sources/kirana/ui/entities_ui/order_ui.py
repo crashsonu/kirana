@@ -30,7 +30,6 @@ class OrderWidget(QtWidgets.QDialog):
         self._category_label = QtWidgets.QLabel('All Products')
         self._search_le = QtWidgets.QLineEdit()
         self._search_le.setPlaceholderText('search product....')
-        self._search_btn = QtWidgets.QPushButton('Search')
         self._products_lw = QtWidgets.QListWidget()
         self._add_cart_btn = QtWidgets.QPushButton('Add Products To Cart')
 
@@ -72,7 +71,6 @@ class OrderWidget(QtWidgets.QDialog):
         self._add_cart_layout.addWidget(self._category_label)
         self._add_cart_layout.addLayout(self._search_layout)
         self._search_layout.addWidget(self._search_le)
-        self._search_layout.addWidget(self._search_btn)
         self._add_cart_layout.addWidget(self._products_lw)
         self._add_cart_layout.addWidget(self._add_cart_btn)
 
@@ -89,7 +87,6 @@ class OrderWidget(QtWidgets.QDialog):
         self._cart_btn_layout.addWidget(self._clear_cart_btn)
 
         self._customer_verify_button.setObjectName('CUSTOMER_VERIFY_PB')
-        self._search_btn.setObjectName('PRODUCT_SEARCH_PB')
 
         self._products_lw.setSpacing(2)
         self.setWindowState(QtCore.Qt.WindowMaximized)
@@ -100,7 +97,7 @@ class OrderWidget(QtWidgets.QDialog):
         self._place_order_btn.clicked.connect(self._on_place_order)
         self._customer_verify_button.clicked.connect(self._on_verify_me)
         self._clear_cart_btn.clicked.connect(self._on_clear_cart)
-        self._search_btn.clicked.connect(self._on_search_btn)
+        self._search_le.returnPressed.connect(self._on_search_products)
 
     def add_all_products(self):
         for each in self.all_products:
@@ -110,11 +107,16 @@ class OrderWidget(QtWidgets.QDialog):
             self._products_lw.addItem(lwi)
             self._products_lw.setItemWidget(lwi, product_widget)
 
-    def _on_search_btn(self):
-        # pro_name = self._search_le.text()
-        # w = Products().filter2(name=pro_name)
-        # n = products_ui.ProductWidget().product_info
-        pass
+    def _on_search_products(self):
+        search_name = self._search_le.text().lower()
+        for i in range(self._products_lw.count()):
+            item = self._products_lw.item(i)
+            wid = self._products_lw.itemWidget(item)
+            product_name = wid.product_info.get('name').lower()
+            if product_name.count(search_name):
+                item.setHidden(False)
+            else:
+                item.setHidden(True)
 
     def _on_add_cart(self):
         for i in range(self._products_lw.count()):
@@ -157,7 +159,6 @@ class OrderWidget(QtWidgets.QDialog):
     @property
     def verified_customer_id(self):
         return self._customer_id
-
 
     @db_connection
     def _on_place_order(self, **kwargs):

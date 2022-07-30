@@ -21,8 +21,6 @@ QPushButton#CUSTOMER_VERIFY_PB {
 
 QPushButton#PRODUCT_SEARCH_PB
 
-
-
  {
     background: #e74c3c;
 }
@@ -86,7 +84,7 @@ QLineEdit {
     border-radius: 8px;
     padding: 0 5px;
     height : 30 px;
-    background-color: #FCDED92;
+    background-color: #FDE6DD;
     font-size: 14px;
     font-style: bold; }
 
