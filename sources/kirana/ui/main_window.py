@@ -1,15 +1,11 @@
 # All Python Built-in Imports Here.
-import os
 import sys
 
 # All Custom Imports Here.
+from kirana.ui.entities_ui import products_ui
+from kirana.ui.entities_ui import order_ui
 from PySide6 import QtWidgets
 from PySide6 import QtCore
-from kirana.ui import place_order_widget
-from kirana.ui import modify_products
-
-from kirana.ui.entities_ui import products_ui
-
 
 # All Native Imports Here.
 
@@ -20,8 +16,8 @@ from kirana.ui.entities_ui import products_ui
 class WindowKiranaManager(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
-        self._place_order_wid = place_order_widget.OrderWidget()
-        self._modification_wid = modify_products.ModifyProducts()
+        self._place_order_wid = order_ui.OrderWidget()
+        self._modification_wid = products_ui.ModifyProducts()
         self._layout = QtWidgets.QVBoxLayout()
         self.tab_widget = QtWidgets.QTabWidget()
 

@@ -8,7 +8,6 @@ from kirana.db import db_connection
 
 # All Attributes or Constants Here.
 
-
 class BaseEntity:
     TABLE_NAME = ''
     COLUMN_NAME = ''

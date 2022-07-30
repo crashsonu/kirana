@@ -4,9 +4,9 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import QCoreApplication
 
 # All Custom Imports Here.
-from kirana.ui import get_stylesheet
-from kirana.ui import prompts
 from kirana.db.entities import customers
+from kirana.ui import get_stylesheet
+from kirana.ui.prompt import prompts
 
 
 # All Native Imports Here.
@@ -53,7 +53,7 @@ class UserRegister(QtWidgets.QDialog):
         self._layout.addWidget(self._submit_btn)
 
     def apply_stylesheet(self):
-        self.setStyleSheet(get_stylesheet('register_user'))
+        self.setStyleSheet(get_stylesheet('customer'))
 
     def setup_connections(self):
         self._submit_btn.clicked.connect(self._on_submit)

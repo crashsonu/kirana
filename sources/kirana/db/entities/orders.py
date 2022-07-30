@@ -20,6 +20,5 @@ class Order(BaseEntity):
         super(Order, self).__init__()
 
 
-
 if __name__ == '__main__':
     pass

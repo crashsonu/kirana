@@ -1,6 +1,7 @@
 # All Python Built-in Imports Here.
 import sys
 from PySide6.QtWidgets import *
+from PySide6.QtWidgets import QMessageBox
 
 
 # All Custom Imports Here.
@@ -13,7 +14,14 @@ def product_added():
     msg = QMessageBox()
     msg.setIcon(QMessageBox.Information)
     msg.setText("Product Added to DATABASE Successfully!!")
-    msg.setWindowTitle("Message")
+    msg.setWindowTitle("Product Added")
+    msg.exec()
+
+def product_deleted():
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Information)
+    msg.setText("Product deleted from DATABASE Successfully!!")
+    msg.setWindowTitle("Deletion completed")
     msg.exec()
 
 
