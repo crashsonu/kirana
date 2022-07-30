@@ -7,13 +7,24 @@ QWidget#ProductWidget {
 }
 
 QPushButton {
-    background: #4834d4;
+    background: #2DA02F;
     border: 1px solid transparent;
     border-radius: 7px;padding: 5px 15px 2px 5px;
     color: #ffffff;
     font: bold;
     width: 70px;
-    height: 25px;
+    height: 30px;
+}
+QPushButton#CUSTOMER_VERIFY_PB {
+    background: #e74c3c;
+}
+
+QPushButton#PRODUCT_SEARCH_PB
+
+
+
+ {
+    background: #e74c3c;
 }
 
 QCheckBox {
@@ -41,7 +52,7 @@ QListWidget::item {
      border-width: .5px;
      border-color: #bdc3c7;
      border-radius: 15px;
-     background-color: #ffffff;
+     background-color: #DDFCFB;
 
 }
 
@@ -51,10 +62,10 @@ QLabel {
 
 
 QHeaderView::section {
-    background-color: #dff9fb;
+
     padding: 5px;
     font-size: 10pt;
-    width: 20px;
+    width: 40px;
     border-style: none;
     border-bottom: 1px solid #fffff8;
     border-right: 1px solid #fffff8;
@@ -68,4 +79,16 @@ QHeaderView::section:horizontal
 QHeaderView::section:vertical
 {
     border-left: 1px solid #fffff8;
+}
+
+QLineEdit {
+    border: 1px solid gray;
+    border-radius: 8px;
+    padding: 0 5px;
+    height : 30 px;
+    background-color: #FCDED92;
+    font-size: 14px;
+    font-style: bold; }
+
+    QLineEdit:focus { background-color: #E7FCD2;
 }

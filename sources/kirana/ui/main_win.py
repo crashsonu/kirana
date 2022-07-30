@@ -34,9 +34,10 @@ class WindowKiranaManager(QtWidgets.QDialog):
     def _setup_ui(self):
         self.setLayout(self._layout)
         self._layout.addWidget(self.tab_widget)
-        self.tab_widget.addTab(self._modification_wid, 'ADD OR DELETE Product')
+        self.tab_widget.addTab(self._modification_wid, 'ADD OR DELETE PRODUCTS')
         self.tab_widget.addTab(self._place_order_wid, 'PLACE ORDER')
         self.setWindowState(QtCore.Qt.WindowMaximized)
+        self.setWindowTitle('KIRANA MANAGER')
 
     def _setup_connections(self):
         pass

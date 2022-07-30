@@ -66,10 +66,14 @@ class OrderWidget(QtWidgets.QDialog):
         super(OrderWidget, self).__init__()
         self._layout = QtWidgets.QVBoxLayout()
         self._layout2 = QtWidgets.QHBoxLayout()
+        self._search_layout = QtWidgets.QHBoxLayout()
         self._add_cart_layout = QtWidgets.QVBoxLayout()
 
         # add category widgets
         self._category_label = QtWidgets.QLabel('All Products')
+        self._search_le = QtWidgets.QLineEdit()
+        self._search_le.setPlaceholderText('search product....')
+        self._search_btn = QtWidgets.QPushButton('Search')
         self._products_lw = QtWidgets.QListWidget()
         self._add_cart_btn = QtWidgets.QPushButton('Add Products To Cart')
 
@@ -86,9 +90,10 @@ class OrderWidget(QtWidgets.QDialog):
         self._place_order_btn = QtWidgets.QPushButton('Place Order')
         self._clear_cart_btn = QtWidgets.QPushButton('Clear Cart')
 
+        self.all_products = Products().all()
+
         # checked product info to add cart
         self._info_to_add_cart = list()
-
         self._initialize()
 
     def _initialize(self):
@@ -104,18 +109,20 @@ class OrderWidget(QtWidgets.QDialog):
         self._layout.addLayout(self._layout2)
         self.setLayout(self._layout2)
         self._layout2.addLayout(self._add_cart_layout)
+        self.setLayout(self._add_cart_layout)
 
         # setting up select category and add products list
         self._add_cart_layout.addWidget(self._category_label)
-
+        self._add_cart_layout.addLayout(self._search_layout)
+        self._search_layout.addWidget(self._search_le)
+        self._search_layout.addWidget(self._search_btn)
         self._add_cart_layout.addWidget(self._products_lw)
-
         self._add_cart_layout.addWidget(self._add_cart_btn)
 
         # cart layout
         self._layout2.addLayout(self._cart_layout)
-        self._cart_layout.addLayout(self._cart_le_layout)
         self._cart_layout.addWidget(self._cart_label)
+        self._cart_layout.addLayout(self._cart_le_layout)
         self._cart_le_layout.addWidget(self._customer_verify)
         self._cart_le_layout.addWidget(self._customer_verify_button)
         self._cart_layout.addWidget(self._cart_tw)
@@ -123,6 +130,9 @@ class OrderWidget(QtWidgets.QDialog):
         self._cart_layout.addLayout(self._cart_btn_layout)
         self._cart_btn_layout.addWidget(self._place_order_btn)
         self._cart_btn_layout.addWidget(self._clear_cart_btn)
+
+        self._customer_verify_button.setObjectName('CUSTOMER_VERIFY_PB')
+        self._search_btn.setObjectName('PRODUCT_SEARCH_PB')
 
         self._products_lw.setSpacing(2)
         self.setWindowState(QtCore.Qt.WindowMaximized)
@@ -134,15 +144,21 @@ class OrderWidget(QtWidgets.QDialog):
         self._place_order_btn.clicked.connect(prompts.order_placed)
         self._customer_verify_button.clicked.connect(self._on_verify_me)
         self._clear_cart_btn.clicked.connect(self._on_clear_cart)
+        self._search_btn.clicked.connect(self._on_search_btn)
 
     def add_all_products(self):
-        all_products = Products().all()
-        for each in all_products:
+        for each in self.all_products:
             product_widget = products_ui.ProductWidget(each)
             lwi = QtWidgets.QListWidgetItem()
             lwi.setSizeHint(product_widget.sizeHint())
             self._products_lw.addItem(lwi)
             self._products_lw.setItemWidget(lwi, product_widget)
+
+    def _on_search_btn(self):
+        # pro_name = self._search_le.text()
+        # w = Products().filter2(name=pro_name)
+        # n = products_ui.ProductWidget().product_info
+        pass
 
     def _on_add_cart(self):
         for i in range(self._products_lw.count()):
@@ -212,6 +228,3 @@ class OrderWidget(QtWidgets.QDialog):
 
     def apply_stylesheet(self):
         self.setStyleSheet(get_stylesheet('stylesheet'))
-
-
-
