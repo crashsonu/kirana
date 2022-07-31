@@ -221,7 +221,7 @@ class AllOrdersTableWidget(QtWidgets.QTableWidget):
 
     def add_orders(self, data):
         row = self.rowCount()
-        self.setRowCount(row+1)
+        self.setRowCount(row + 1)
         for key, value in data.items():
             column = self.MAPPED_HEADERS.get(key)
 
@@ -230,13 +230,25 @@ class AllOrdersTableWidget(QtWidgets.QTableWidget):
             self.setItem(row, column, item)
 
     def provide_data(self):
+        _list = (list)
         for each in self.all_orders:
-            print(each)
+            _dict = dict()
             customer_name = Customer().get(return_fields='first_name', id=each['customer_id'])
             get_pr_id = each['products']
-            print(get_pr_id)
+            p = (get_pr_id.strip('"{, }"')).replace("'", "")
+            _key, _value = [], []
+            n = p.split(',')
+            for x in n:
+                l = x.split(':')
+                m = l[0]
+                n = l[1].lstrip(" ")
+                _dict.update({m: n})
+            _list.append(_dict)
+        print(_list)
+
+        return
+
             # product_name = Products().get(return_fields='name', id=each[] )
-            print(customer_name)
             # print(product_name)
 
 
