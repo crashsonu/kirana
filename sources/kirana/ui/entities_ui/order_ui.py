@@ -1,4 +1,5 @@
 # All Python Built-in Imports Here.
+import sys
 from datetime import datetime
 
 # All Custom Imports Here.
@@ -9,6 +10,7 @@ from PySide6 import QtCore
 from kirana.ui.entities_ui.cart_ui import CartTableWidget
 from kirana.db.entities.customers import Customer
 from kirana.db.entities.products import Products
+from kirana.db.entities.orders import Order
 from kirana.ui.entities_ui import products_ui
 from kirana.ui.entities_ui import customer_ui
 from kirana.ui import get_stylesheet
@@ -195,6 +197,44 @@ class OrderWidget(QtWidgets.QDialog):
     def apply_stylesheet(self):
         self.setStyleSheet(get_stylesheet('order'))
 
+
+class AllOrdersTableWidget(QtWidgets.QTableWidget):
+    MAPPED_HEADERS = {'Customer Name': 0, 'Products': 1, 'Ordered Date': 2}
+
+    def __init__(self):
+        super(AllOrdersTableWidget, self).__init__()
+        self.orders_list = list()
+        self.all_orders = Order().all()
+
+
+        self._initialize()
+
+
+    def _initialize(self):
+        self.setRowCount(0)
+        self.setColumnCount(len(self.MAPPED_HEADERS))
+        self.setHorizontalHeaderLabels(list(self.MAPPED_HEADERS.keys()))
+
+    def _setup_ui(self):
+        pass
+
+    def _setup_connections(self):
+        pass
+
+    def add_orders(self, data):
+        row = self.rowCount()
+        self.setRowCount(row+1)
+        for key, value in data.items():
+            column = self.MAPPED_HEADERS.get(key)
+
+            val = f'{value}'
+            item = QtWidgets.QTableWidgetItem(val)
+            self.setItem(row, column, item)
+
+    def provide_data(self):
+        for each in self.all_orders:
+            customer_name = Customer().get(return_fields='name', id=each['customer_id'])
+            product_name = Products().get(return_fields='name', )
 
 if __name__ == '__main__':
     pass
