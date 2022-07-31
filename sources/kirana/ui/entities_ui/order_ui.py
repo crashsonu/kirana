@@ -182,7 +182,6 @@ class OrderWidget(QtWidgets.QDialog):
             products_dict_json[f"{k}"] = f"{v}"
 
         products_dict_json_str = f'"{products_dict_json}"'
-
         msg = f'insert into orders(customer_id, products, ordered_on) values(%s, %s, %s)'
         values = (customer_id, products_dict_json_str, ordered_on)
         cursor.execute(msg, values)
@@ -206,14 +205,13 @@ class AllOrdersTableWidget(QtWidgets.QTableWidget):
         self.orders_list = list()
         self.all_orders = Order().all()
 
-
         self._initialize()
-
 
     def _initialize(self):
         self.setRowCount(0)
         self.setColumnCount(len(self.MAPPED_HEADERS))
         self.setHorizontalHeaderLabels(list(self.MAPPED_HEADERS.keys()))
+        self.provide_data()
 
     def _setup_ui(self):
         pass
@@ -233,8 +231,14 @@ class AllOrdersTableWidget(QtWidgets.QTableWidget):
 
     def provide_data(self):
         for each in self.all_orders:
-            customer_name = Customer().get(return_fields='name', id=each['customer_id'])
-            product_name = Products().get(return_fields='name', )
+            print(each)
+            customer_name = Customer().get(return_fields='first_name', id=each['customer_id'])
+            get_pr_id = each['products']
+            print(get_pr_id)
+            # product_name = Products().get(return_fields='name', id=each[] )
+            print(customer_name)
+            # print(product_name)
+
 
 if __name__ == '__main__':
     pass

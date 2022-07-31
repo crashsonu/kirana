@@ -14,7 +14,7 @@ from kirana.db.entities import BaseEntity
 
 class Order(BaseEntity):
     TABLE_NAME = 'orders'
-    COLUMN_NAME = BaseEntity.get_all_column_names(TABLE_NAME)
+    COLUMN_NAME = BaseEntity().get_all_column_names(TABLE_NAME)
 
     def __init__(self):
         super(Order, self).__init__()

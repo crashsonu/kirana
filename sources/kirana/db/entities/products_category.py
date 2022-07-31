@@ -10,7 +10,7 @@ from kirana.db.entities import BaseEntity
 
 class ProductsCategory(BaseEntity):
     TABLE_NAME = 'products_category'
-    COLUMN_NAME = BaseEntity().get_all_column_names(table_name=TABLE_NAME)
+    COLUMN_NAME = BaseEntity().get_all_column_names(TABLE_NAME)
 
     def __init__(self):
         super(ProductsCategory, self).__init__()

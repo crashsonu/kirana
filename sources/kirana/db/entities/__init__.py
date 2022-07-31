@@ -121,7 +121,7 @@ class BaseEntity:
         column_value = list(kwargs.values())[0]
 
         if return_fields is not None:
-            cursor.execute(f'select {return_fields} from {self.TABLE_NAME} where {column_name} = "{[each for each in column_value]}"')
+            cursor.execute(f'select {return_fields} from {self.TABLE_NAME} where {column_name} = "{column_value}"')
             _fetched = (cursor.fetchall())[0][0]
             return _fetched
 

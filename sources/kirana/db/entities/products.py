@@ -11,7 +11,7 @@ from kirana.db.entities import BaseEntity
 
 class Products(BaseEntity):
     TABLE_NAME = 'products'
-    COLUMN_NAME = BaseEntity().get_all_column_names(table_name=TABLE_NAME)
+    COLUMN_NAME = BaseEntity().get_all_column_names(TABLE_NAME)
 
     def __init__(self):
         super(Products, self).__init__()
