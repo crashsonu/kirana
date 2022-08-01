@@ -121,15 +121,19 @@ class BaseEntity:
         column_value = list(kwargs.values())[0]
 
         if return_fields is not None:
-            cursor.execute(f'select {return_fields} from {self.TABLE_NAME} where {column_name} = "{column_value}"')
-            _fetched = (cursor.fetchall())[0][0]
-            return _fetched
+            return_field_str = (str(return_fields).strip('[]')).replace('\'', '')
+
+            cursor.execute(f'select {return_field_str} from {self.TABLE_NAME} where {column_name} = "{column_value}"')
+            _fetched = (cursor.fetchall())[0]
+            result = ' '.join(_fetched)
+            return result
 
         cursor.execute(f'select * from {self.TABLE_NAME} where {column_name} = "{column_value}"')
         _result = self.zip_method(self.COLUMN_NAME, cursor.fetchall())
 
         cursor.close()
         return _result
+
 
     @db_connection
     def insert(self, values_ls, **kwargs):

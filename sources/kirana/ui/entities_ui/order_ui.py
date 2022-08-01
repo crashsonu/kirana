@@ -198,7 +198,7 @@ class OrderWidget(QtWidgets.QDialog):
 
 
 class AllOrdersTableWidget(QtWidgets.QTableWidget):
-    MAPPED_HEADERS = {'Customer Name': 0, 'Products': 1, 'Ordered Date': 2}
+    MAPPED_HEADERS = {'customer_id': 0, 'products': 1, 'ordered_on': 2, 'order_status': 3}
 
     def __init__(self):
         super(AllOrdersTableWidget, self).__init__()
@@ -211,7 +211,12 @@ class AllOrdersTableWidget(QtWidgets.QTableWidget):
         self.setRowCount(0)
         self.setColumnCount(len(self.MAPPED_HEADERS))
         self.setHorizontalHeaderLabels(list(self.MAPPED_HEADERS.keys()))
-        self.provide_data()
+        self.add_orders()
+
+        header = self.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
 
     def _setup_ui(self):
         pass
@@ -219,37 +224,27 @@ class AllOrdersTableWidget(QtWidgets.QTableWidget):
     def _setup_connections(self):
         pass
 
-    def add_orders(self, data):
-        row = self.rowCount()
-        self.setRowCount(row + 1)
-        for key, value in data.items():
-            column = self.MAPPED_HEADERS.get(key)
-
-            val = f'{value}'
-            item = QtWidgets.QTableWidgetItem(val)
-            self.setItem(row, column, item)
-
-    def provide_data(self):
-        _list = (list)
+    def add_orders(self):
         for each in self.all_orders:
             _dict = dict()
-            customer_name = Customer().get(return_fields='first_name', id=each['customer_id'])
-            get_pr_id = each['products']
-            p = (get_pr_id.strip('"{, }"')).replace("'", "")
-            _key, _value = [], []
-            n = p.split(',')
-            for x in n:
-                l = x.split(':')
-                m = l[0]
-                n = l[1].lstrip(" ")
-                _dict.update({m: n})
-            _list.append(_dict)
-        print(_list)
+            _customer_name = Customer().get(return_fields=['first_name', 'last_name'], id=each['customer_id'])
+            _products = each['products']
+            _date = each['ordered_on']
+            _dict['customer_id'] = _customer_name
+            _dict['products'] = _products
+            _dict['ordered_on'] = _date
 
-        return
+            row = self.rowCount()
+            self.setRowCount(row + 1)
+            for key, value in _dict.items():
+                column = self.MAPPED_HEADERS.get(key)
+                if column is None:
+                    continue
 
-            # product_name = Products().get(return_fields='name', id=each[] )
-            # print(product_name)
+                val = f'{value}'
+                item = QtWidgets.QTableWidgetItem(val)
+                self.setItem(row, column, item)
+
 
 
 if __name__ == '__main__':
