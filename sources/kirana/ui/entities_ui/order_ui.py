@@ -243,7 +243,14 @@ class AllOrdersTableWidget(QtWidgets.QTableWidget):
 
                 val = f'{value}'
                 item = QtWidgets.QTableWidgetItem(val)
+                _combox = QtWidgets.QComboBox()
+                _combox.addItems(['Pending', 'Delivered'])
                 self.setItem(row, column, item)
+                self.setCellWidget(row, 3, _combox)
+
+    @property
+    def delivered(self):
+        return 'Delivered'
 
 
 if __name__ == '__main__':
