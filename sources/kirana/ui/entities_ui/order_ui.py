@@ -246,6 +246,5 @@ class AllOrdersTableWidget(QtWidgets.QTableWidget):
                 self.setItem(row, column, item)
 
 
-
 if __name__ == '__main__':
     pass

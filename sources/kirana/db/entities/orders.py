@@ -21,4 +21,5 @@ class Order(BaseEntity):
 
 
 if __name__ == '__main__':
-    pass
+    inst = Order()
+    inst.delete([18, 19])

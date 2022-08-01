@@ -271,14 +271,16 @@ class ModifyProducts(QtWidgets.QDialog):
         products.Products().insert(values_ls[0])
 
     def _on_delete_product(self):
+        product_ids = list()
         for i in range(self.products_lw.count()):
             item = self.products_lw.item(i)
             wid = self.products_lw.itemWidget(item)
             if not wid.checked:
                 continue
             product_id = wid.chek_box_id
-            products.Products().delete(product_id=product_id)
-            prompts.product_deleted()
+            product_ids.append(product_id)
+        products.Products().delete(product_ids=product_ids)
+        prompts.product_deleted()
 
     def apply_stylesheet(self):
         self.setStyleSheet(get_stylesheet('product'))
