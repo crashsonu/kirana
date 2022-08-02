@@ -21,6 +21,7 @@ class OrdersStatusWidget(QtWidgets.QTableWidget):
         super(OrdersStatusWidget, self).__init__()
         self.order_status_names = OrderStatus().all(column_name='name')
         self.all_orders = Order().all()
+        self.orders_status_data = OrderStatus().all()
         self.save_changes = QtWidgets.QPushButton()
 
         self._initialize()
@@ -65,11 +66,19 @@ class OrdersStatusWidget(QtWidgets.QTableWidget):
                     continue
 
                 val = f'{value}'
+
                 item = QtWidgets.QTableWidgetItem(val)
                 self._combox = QtWidgets.QComboBox()
                 self._combox.addItems(self.order_status_names)
                 self.setItem(row, column, item)
                 self.setCellWidget(row, 5, self._combox)
+                status_id = each['status']
+                self.orders_status_data = OrderStatus().all()
+                for x in self.orders_status_data:
+                    if status_id != x['id']:
+                        continue
+                    self.orders_status_name = x['name']
+                self._combox.setCurrentText(self.orders_status_name)
 
 
 class OrderStatusUi(QtWidgets.QDialog):
@@ -77,6 +86,7 @@ class OrderStatusUi(QtWidgets.QDialog):
         super(OrderStatusUi, self).__init__()
         self._layout = QtWidgets.QVBoxLayout()
         self.save_changes_btn = QtWidgets.QPushButton('Save Status Changes')
+        self.orders_status_data = OrderStatus().all()
         self.orders_status_widget = OrdersStatusWidget()
         self.setLayout(self._layout)
         self._layout.addWidget(self.orders_status_widget)
@@ -96,7 +106,6 @@ class OrderStatusUi(QtWidgets.QDialog):
     def update_status(self, **kwargs):
         connection = kwargs.pop('connection')
         cursor = connection.cursor()
-        self.orders_status_data = OrderStatus().all()
         for row in range(self.orders_status_widget.rowCount()):
             status_chk = self.orders_status_widget.cellWidget(row, 5)
             status_text = status_chk.currentText()
