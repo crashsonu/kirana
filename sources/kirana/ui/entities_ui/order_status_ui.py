@@ -3,6 +3,7 @@ import sys
 from PySide6 import QtWidgets, QtCore
 
 # All Custom Imports Here.
+from kirana.db import db_connection
 from kirana.db.entities.orders import Order
 from kirana.db.entities.customers import Customer
 from kirana.db.entities.order_status import OrderStatus
@@ -12,46 +13,39 @@ from kirana.db.entities.order_status import OrderStatus
 
 # All Attributes or Constants Here.
 
-class OrdersLwWidget(QtWidgets.QDialog):
-    def __init__(self, data):
-        super(OrdersLwWidget, self).__init__()
-        self._layout = QtWidgets.QHBoxLayout()
-        self._order_id_label = QtWidgets.QLabel(data['id'])
-        self._customer_name_label = QtWidgets.QLabel(data['customer_name'])
-        self._address_label = QtWidgets.QLabel(data['address'])
-        self._products_label = QtWidgets.QLabel(data['products'])
-        self._order_status_cb = QtWidgets.QComboBox()
-        self._order_date_label = QtWidgets.QLabel(data['ordered_on'])
+class OrdersStatusWidget(QtWidgets.QTableWidget):
+    MAPPED_HEADERS = {'order_id': 0, 'customer_name': 1, 'address': 2, 'products': 3, 'ordered_on': 4,
+                      'delivery_status': 5}
 
+    def __init__(self):
+        super(OrdersStatusWidget, self).__init__()
         self.order_status_names = OrderStatus().all(column_name='name')
+        self.all_orders = Order().all()
+        self.save_changes = QtWidgets.QPushButton()
 
         self._initialize()
 
     def _initialize(self):
+        self.setRowCount(0)
+        self.setColumnCount(len(self.MAPPED_HEADERS))
+        self.setHorizontalHeaderLabels(list(self.MAPPED_HEADERS.keys()))
         self.setup_ui()
+        self.add_orders()
+
+        header = self.horizontalHeader()
+        header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
 
     def setup_ui(self):
-        self.setLayout(self._layout)
-        self._layout.addWidget(self._order_id_label)
-        self._layout.addWidget(self._customer_name_label)
-        self._layout.addWidget(self._products_label)
-        self._layout.addWidget(self._address_label)
-        self._layout.addWidget(self._order_date_label)
-        self._layout.addWidget(self._order_status_cb)
+        pass
 
-        self._order_status_cb.addItems(self.order_status_names)
-
-
-class OrdersStatusWid(QtWidgets.QDialog):
-    def __init__(self):
-        super(OrdersStatusWid, self).__init__()
-        self.setWindowState(QtCore.Qt.WindowMaximized)
-        self._layout = QtWidgets.QVBoxLayout()
-        self._orders_lw = QtWidgets.QListWidget()
-        self._save_changes_btn = QtWidgets.QPushButton('Save Changes')
-        self.all_orders = Order().all()
+    def add_orders(self):
         for each in self.all_orders:
-            _order_id = each['id']
+            self._order_id = each['id']
             _customer_id = each['customer_id']
             _customer_name = Customer().get(return_fields=['first_name', 'last_name'], id=_customer_id)
             _customer_address = Customer().get(return_fields='address', id=_customer_id)
@@ -59,33 +53,68 @@ class OrdersStatusWid(QtWidgets.QDialog):
             del each['customer_id']
             del each['id']
             del each['ordered_on']
-            each['id'] = str(_order_id)
+            each['order_id'] = str(self._order_id)
             each['customer_name'] = _customer_name
             each['address'] = _customer_address
             each['ordered_on'] = str(_order_date)
-            orders_widget = OrdersLwWidget(each)
-            lwi = QtWidgets.QListWidgetItem()
-            lwi.setSizeHint(orders_widget.sizeHint())
-            self._orders_lw.addItem(lwi)
-            self._orders_lw.setItemWidget(lwi, orders_widget)
+            row = self.rowCount()
+            self.setRowCount(row + 1)
+            for key, value in each.items():
+                column = self.MAPPED_HEADERS.get(key)
+                if column is None:
+                    continue
 
-        self._initialize()
+                val = f'{value}'
+                item = QtWidgets.QTableWidgetItem(val)
+                self._combox = QtWidgets.QComboBox()
+                self._combox.addItems(self.order_status_names)
+                self.setItem(row, column, item)
+                self.setCellWidget(row, 5, self._combox)
 
-    def _initialize(self):
-        self.setup_ui()
 
-    def setup_ui(self):
+class OrderStatusUi(QtWidgets.QDialog):
+    def __init__(self):
+        super(OrderStatusUi, self).__init__()
+        self._layout = QtWidgets.QVBoxLayout()
+        self.save_changes_btn = QtWidgets.QPushButton('Save Status Changes')
+        self.orders_status_widget = OrdersStatusWidget()
         self.setLayout(self._layout)
-        self._layout.addWidget(self._orders_lw)
-        self._layout.addWidget(self._save_changes_btn)
+        self._layout.addWidget(self.orders_status_widget)
+        self._layout.addWidget(self.save_changes_btn)
 
-    def setup_connections(self):
-        pass
+        self.setup_ui_connections()
+
+    def setup_ui_connections(self):
+        self.save_changes_btn.clicked.connect(self.update_status)
+
+    def set_combox_text(self, text):
+        for row in range(self.orders_status_widget.rowCount()):
+            status_chk = self.orders_status_widget.cellWidget(row, 5)
+            status_chk.setCurrentText(text)
+
+    @db_connection
+    def update_status(self, **kwargs):
+        connection = kwargs.pop('connection')
+        cursor = connection.cursor()
+        self.orders_status_data = OrderStatus().all()
+        for row in range(self.orders_status_widget.rowCount()):
+            status_chk = self.orders_status_widget.cellWidget(row, 5)
+            status_text = status_chk.currentText()
+            order_id = self.orders_status_widget.item(row, 0)
+            order_id_txt = int(order_id.text())
+            for each in self.orders_status_data:
+                if status_text != each['name']:
+                    continue
+                self.orders_status_id = each['id']
+
+            msg = f'update orders set status = {self.orders_status_id} where id = {order_id_txt}'
+            cursor.execute(msg)
+            connection.commit()
 
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    inst = OrdersStatusWid()
+    inst = OrderStatusUi()
     root = QtWidgets.QWidget()
     inst.show()
     app.exec()

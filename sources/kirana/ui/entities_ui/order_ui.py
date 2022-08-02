@@ -248,9 +248,6 @@ class AllOrdersTableWidget(QtWidgets.QTableWidget):
                 self.setItem(row, column, item)
                 self.setCellWidget(row, 3, _combox)
 
-    @property
-    def delivered(self):
-        return 'Delivered'
 
 
 if __name__ == '__main__':
