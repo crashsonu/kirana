@@ -8,6 +8,7 @@ from PySide6 import QtCore
 
 # All Native Imports Here.
 from kirana.ui.entities_ui.cart_ui import CartTableWidget
+from kirana.db.entities.order_status import OrderStatus
 from kirana.db.entities.customers import Customer
 from kirana.db.entities.products import Products
 from kirana.db.entities.orders import Order
@@ -141,6 +142,7 @@ class OrderWidget(QtWidgets.QDialog):
         if self._phone_number in existing_phone_numbers:
             prompts.customer_verified()
             self._customer_id = Customer().get(return_fields='id', mobile=self._phone_number)
+            print(self._customer_id)
             return self._customer_id
 
         if len(self._phone_number) == 10 and self._phone_number not in existing_phone_numbers:
@@ -180,7 +182,6 @@ class OrderWidget(QtWidgets.QDialog):
         products_dict_json = dict()
         for k, v in products_dict.items():
             products_dict_json[f"{k}"] = f"{v}"
-
         products_dict_json_str = f'"{products_dict_json}"'
         msg = f'insert into orders(customer_id, products, ordered_on) values(%s, %s, %s)'
         values = (customer_id, products_dict_json_str, ordered_on)
@@ -188,6 +189,7 @@ class OrderWidget(QtWidgets.QDialog):
         connection.commit()
         prompts.order_placed()
         print('Order placed successfully.')
+        self._on_clear_cart()
 
     def _on_clear_cart(self):
         self._cart_tw.setRowCount(0)
@@ -198,12 +200,13 @@ class OrderWidget(QtWidgets.QDialog):
 
 
 class AllOrdersTableWidget(QtWidgets.QTableWidget):
-    MAPPED_HEADERS = {'customer_id': 0, 'products': 1, 'ordered_on': 2, 'order_status': 3}
+    MAPPED_HEADERS = {'customer_id': 0, 'address': 1, 'products': 2, 'ordered_on': 3, 'order_delivery_status': 4}
 
     def __init__(self):
         super(AllOrdersTableWidget, self).__init__()
         self.orders_list = list()
         self.all_orders = Order().all()
+        self.orders_status_data = OrderStatus().all()
 
         self._initialize()
 
@@ -217,6 +220,8 @@ class AllOrdersTableWidget(QtWidgets.QTableWidget):
         header.setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeToContents)
         header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(3, QtWidgets.QHeaderView.ResizeToContents)
+        header.setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
 
     def _setup_ui(self):
         pass
@@ -227,9 +232,19 @@ class AllOrdersTableWidget(QtWidgets.QTableWidget):
     def add_orders(self):
         for each in self.all_orders:
             _dict = dict()
+            _customer_id = each['customer_id']
             _customer_name = Customer().get(return_fields=['first_name', 'last_name'], id=each['customer_id'])
+            _customer_address = Customer().get(return_fields='address', id=_customer_id)
             _products = each['products']
             _date = each['ordered_on']
+            _order_status_id = each['status']
+            for x in self.orders_status_data:
+                if _order_status_id != x['id']:
+                    continue
+                self.orders_status_name = x['name']
+            _order_status = self.orders_status_name
+            _dict['order_delivery_status'] = _order_status
+            _dict['address'] = _customer_address
             _dict['customer_id'] = _customer_name
             _dict['products'] = _products
             _dict['ordered_on'] = _date
@@ -243,10 +258,7 @@ class AllOrdersTableWidget(QtWidgets.QTableWidget):
 
                 val = f'{value}'
                 item = QtWidgets.QTableWidgetItem(val)
-                _combox = QtWidgets.QComboBox()
-                _combox.addItems(['Pending', 'Delivered'])
                 self.setItem(row, column, item)
-                self.setCellWidget(row, 3, _combox)
 
 
 

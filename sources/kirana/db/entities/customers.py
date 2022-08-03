@@ -18,7 +18,8 @@ class Customer(BaseEntity):
 
 
 if __name__ == '__main__':
-    inst = Customer()
-    res = inst.filter(postal_code=410209)
-    print(inst.all())
-    print(inst.get(id=1))
+    pass
+    # inst = Customer()
+    # res = inst.get(return_fields='id', mobile=7715809262)
+    # print(res)
+

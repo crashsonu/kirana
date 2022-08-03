@@ -163,16 +163,19 @@ class ModifyProducts(QtWidgets.QDialog):
         super(ModifyProducts, self).__init__()
         self._layout = QtWidgets.QVBoxLayout()
         self._layout2 = QtWidgets.QHBoxLayout()
-        self.lw_layout = QtWidgets.QHBoxLayout()
+        self.lw_layout = QtWidgets.QVBoxLayout()
         self.del_pro_layout = QtWidgets.QVBoxLayout()
         self.add_prod_layout = QtWidgets.QFormLayout()
+        self.add_cat_layout = QtWidgets.QFormLayout()
         self.products_lw = QtWidgets.QListWidget()
         self.pro_chk_box = QtWidgets.QCheckBox()
         self.del_prod_btn = QtWidgets.QPushButton("Delete Product")
 
         self.add_pro_label = QtWidgets.QLabel('ADD NEW PRODUCT DETAILS')
         self.del_pro_label = QtWidgets.QLabel('DELETE SELECTED PRODUCT')
+        self.add_cat_label = QtWidgets.QLabel('ADD CATEGORY')
 
+        # add product form
         self.add_prod_lw = QtWidgets.QListWidget()
         self.pro_name_lb = QtWidgets.QLabel('Product Name')
         self.prod_name_le = QtWidgets.QLineEdit()
@@ -191,6 +194,12 @@ class ModifyProducts(QtWidgets.QDialog):
         self.add_prod_btn = QtWidgets.QPushButton("Add Product")
         self._spacer = QtWidgets.QSpacerItem(150, 10, QtWidgets.QSizePolicy.Expanding)
 
+        # add category form
+        self.category_name_label = QtWidgets.QLabel("Category Name")
+        self.category_name_le = QtWidgets.QLineEdit()
+        self.category_name_le.setPlaceholderText('category name....')
+        self.add_cat_btn = QtWidgets.QPushButton('Add Category')
+
         self._initialize()
 
     def _initialize(self):
@@ -205,7 +214,8 @@ class ModifyProducts(QtWidgets.QDialog):
         self._layout.addLayout(self._layout2)
 
         # add product section
-        self._layout2.addLayout(self.add_prod_layout)
+        self._layout2.addLayout(self.lw_layout)
+        self.lw_layout.addLayout(self.add_prod_layout)
         self.add_prod_layout.addWidget(self.add_pro_label)
         self.add_prod_layout.addRow(self.pro_name_lb, self.prod_name_le)
         self.add_prod_layout.addRow(self.pro_cat_label, self.prod_cat_cb)
@@ -215,6 +225,12 @@ class ModifyProducts(QtWidgets.QDialog):
         self.add_prod_layout.addRow(self.pro_gst_label, self.prod_gst_le)
 
         self.add_prod_layout.addWidget(self.add_prod_btn)
+
+        # add category section
+        self.lw_layout.addLayout(self.add_cat_layout)
+        self.add_cat_layout.addRow(self.add_cat_label)
+        self.add_cat_layout.addRow(self.category_name_label, self.category_name_le)
+        self.add_cat_layout.addWidget(self.add_cat_btn)
 
         # delete product section
         self._layout2.addLayout(self.del_pro_layout)
@@ -229,7 +245,7 @@ class ModifyProducts(QtWidgets.QDialog):
     def _setup_widget_connections(self):
         self.add_prod_btn.clicked.connect(self._on_add_product)
         self.del_prod_btn.clicked.connect(self._on_delete_product)
-        self.add_prod_btn.clicked.connect(prompts.product_added)
+        self.add_cat_btn.clicked.connect(self._on_add_category)
 
     def add_products_lw(self):
         all_products = products.Products().all()
@@ -269,6 +285,13 @@ class ModifyProducts(QtWidgets.QDialog):
         values_ls.append((name, category_id[0], price, gst, size, unit_id[0]))
 
         products.Products().insert(values_ls[0])
+        prompts.product_added()
+
+    def _on_add_category(self):
+        category_name = [self.category_name_le.text()]
+        products_category.ProductsCategory().insert(category_name)
+        prompts.category_added()
+        self.category_name_le.clear()
 
     def _on_delete_product(self):
         product_ids = list()

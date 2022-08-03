@@ -24,6 +24,13 @@ def product_deleted():
     msg.setWindowTitle("Deletion completed")
     msg.exec()
 
+def category_added():
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Information)
+    msg.setText("Product Category Added to DATABASE Successfully!!")
+    msg.setWindowTitle("category Added")
+    msg.exec()
+
 
 def registration_done():
     msg = QMessageBox()
@@ -47,6 +54,13 @@ def order_placed():
     msg.setIcon(QMessageBox.Information)
     msg.setText("Order Placed!")
     msg.setWindowTitle("Order completed.")
+    msg.exec()
+
+def delivery_status_updated():
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Information)
+    msg.setText("Successfully Updated delivery status!!")
+    msg.setWindowTitle("Updated")
     msg.exec()
 
 

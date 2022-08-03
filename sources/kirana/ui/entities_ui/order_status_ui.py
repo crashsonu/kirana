@@ -4,6 +4,7 @@ from PySide6 import QtWidgets, QtCore
 
 # All Custom Imports Here.
 from kirana.db import db_connection
+from kirana.ui.prompt import prompts
 from kirana.db.entities.orders import Order
 from kirana.db.entities.customers import Customer
 from kirana.db.entities.order_status import OrderStatus
@@ -14,8 +15,8 @@ from kirana.db.entities.order_status import OrderStatus
 # All Attributes or Constants Here.
 
 class OrdersStatusWidget(QtWidgets.QTableWidget):
-    MAPPED_HEADERS = {'order_id': 0, 'customer_name': 1, 'address': 2, 'products': 3, 'ordered_on': 4,
-                      'delivery_status': 5}
+    MAPPED_HEADERS = {'delivery_status': 0, 'order_id': 1, 'customer_name': 2, 'address': 3, 'products': 4, 'ordered_on': 5,
+                      }
 
     def __init__(self):
         super(OrdersStatusWidget, self).__init__()
@@ -71,7 +72,7 @@ class OrdersStatusWidget(QtWidgets.QTableWidget):
                 self._combox = QtWidgets.QComboBox()
                 self._combox.addItems(self.order_status_names)
                 self.setItem(row, column, item)
-                self.setCellWidget(row, 5, self._combox)
+                self.setCellWidget(row, 0, self._combox)
                 status_id = each['status']
                 self.orders_status_data = OrderStatus().all()
                 for x in self.orders_status_data:
@@ -119,11 +120,14 @@ class OrderStatusUi(QtWidgets.QDialog):
             msg = f'update orders set status = {self.orders_status_id} where id = {order_id_txt}'
             cursor.execute(msg)
             connection.commit()
+        prompts.delivery_status_updated()
+
 
 
 if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    inst = OrderStatusUi()
-    root = QtWidgets.QWidget()
-    inst.show()
-    app.exec()
+    pass
+    # app = QtWidgets.QApplication(sys.argv)
+    # inst = OrderStatusUi()
+    # root = QtWidgets.QWidget()
+    # inst.show()
+    # app.exec()

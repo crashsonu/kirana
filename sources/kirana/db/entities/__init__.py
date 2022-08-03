@@ -122,11 +122,13 @@ class BaseEntity:
 
         if return_fields is not None:
             return_field_str = (str(return_fields).strip('[]')).replace('\'', '')
-
-            cursor.execute(f'select {return_field_str} from {self.TABLE_NAME} where {column_name} = "{column_value}"')
+            msg = f'select {return_field_str} from {self.TABLE_NAME} where {column_name} = "{column_value}"'
+            cursor.execute(msg)
             _fetched = (cursor.fetchall())[0]
-            result = ' '.join(_fetched)
-            return result
+            if len(_fetched) > 1:
+                result = ' '.join(_fetched)
+                return result
+            return _fetched[0]
 
         cursor.execute(f'select * from {self.TABLE_NAME} where {column_name} = "{column_value}"')
         _result = self.zip_method(self.COLUMN_NAME, cursor.fetchall())
