@@ -136,7 +136,6 @@ class BaseEntity:
         cursor.close()
         return _result
 
-
     @db_connection
     def insert(self, values_ls, **kwargs):
         connection = kwargs.pop('connection')

@@ -21,6 +21,7 @@ from PySide6 import QtCore
 
 class ProductWidget(QtWidgets.QWidget):
     """For adding products list for place order tab."""
+
     def __init__(self, product_info):
         """Product widget to show product for add to cart or else.
         Args:
@@ -115,7 +116,6 @@ class ProductWidget(QtWidgets.QWidget):
         return result
 
 
-
 class ProductsWid(QtWidgets.QDialog):
     def __init__(self, data):
         super(ProductsWid, self).__init__()
@@ -166,6 +166,8 @@ class ModifyProducts(QtWidgets.QDialog):
         self.lw_layout = QtWidgets.QVBoxLayout()
         self.del_pro_layout = QtWidgets.QVBoxLayout()
         self.add_prod_layout = QtWidgets.QFormLayout()
+        self.category_layout = QtWidgets.QHBoxLayout()
+        self.del_cat_layout = QtWidgets.QFormLayout()
         self.add_cat_layout = QtWidgets.QFormLayout()
         self.products_lw = QtWidgets.QListWidget()
         self.pro_chk_box = QtWidgets.QCheckBox()
@@ -200,6 +202,14 @@ class ModifyProducts(QtWidgets.QDialog):
         self.category_name_le.setPlaceholderText('category name....')
         self.add_cat_btn = QtWidgets.QPushButton('Add Category')
 
+        # delete category form
+        self.delete_cat_label = QtWidgets.QLabel('DELETE CATEGORY')
+        self.del_category_name_label = QtWidgets.QLabel("Category Name")
+        self.del_cat_name_cb = QtWidgets.QComboBox()
+        self.del_cat_name_cb.setCurrentText('select category....')
+        self.del_cat_btn = QtWidgets.QPushButton('Delete Category')
+
+
         self._initialize()
 
     def _initialize(self):
@@ -232,6 +242,12 @@ class ModifyProducts(QtWidgets.QDialog):
         self.add_cat_layout.addRow(self.category_name_label, self.category_name_le)
         self.add_cat_layout.addWidget(self.add_cat_btn)
 
+        # delete category section
+        self.lw_layout.addLayout(self.del_cat_layout)
+        self.del_cat_layout.addRow(self.delete_cat_label)
+        self.del_cat_layout.addRow(self.del_category_name_label, self.del_cat_name_cb)
+        self.del_cat_layout.addWidget(self.del_cat_btn)
+
         # delete product section
         self._layout2.addLayout(self.del_pro_layout)
         self.del_pro_layout.addWidget(self.del_pro_label)
@@ -257,9 +273,9 @@ class ModifyProducts(QtWidgets.QDialog):
             self.products_lw.setItemWidget(lwi, product_widget)
 
     def add_category(self):
-        category_names = products_category.ProductsCategory().all()
-        for each in category_names:
+        for each in self.category_names:
             self.prod_cat_cb.addItem(each['name'])
+            self.del_cat_name_cb.addItem(each['name'])
 
         unit_names = units.Unit().all()
         for each in unit_names:
