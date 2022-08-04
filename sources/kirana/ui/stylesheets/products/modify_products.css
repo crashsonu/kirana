@@ -1,0 +1,13 @@
+
+
+
+QLineEdit {
+    border: 1px solid gray;
+    border-radius: 1px;
+    padding: 0 8px;
+    width: 100px;
+    selection-background-color: #E7FCD2;
+    font-size: 16px;}
+    QLineEdit:focus {;
+    border: 1px solid #2ecc71
+}

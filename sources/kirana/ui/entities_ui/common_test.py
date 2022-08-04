@@ -29,8 +29,11 @@ class AddNewProduct(QtWidgets.QDialog):
         self.add_prod_lw = QtWidgets.QListWidget()
         self.pro_name_lb = QtWidgets.QLabel('Product Name')
         self.prod_name_le = QtWidgets.QLineEdit()
+        self.prod_name_le.setFixedSize(400, 40)
+        self._layout1 = QtWidgets.QVBoxLayout()
         self.pro_cat_label = QtWidgets.QLabel("Select Product Category")
         self.prod_cat_cb = QtWidgets.QComboBox()
+        self.prod_cat_cb.setFixedSize(400, 40)
         self.pro_price_lb = QtWidgets.QLabel('Price in Rs.')
         self.prod_price_cb = QtWidgets.QLineEdit()
         self.pro_gst_label = QtWidgets.QLabel('GST Percentage')
@@ -53,6 +56,7 @@ class AddNewProduct(QtWidgets.QDialog):
         self._setup_ui()
         self._setup_connections()
         self.add_category()
+        self.apply_css()
 
     def _setup_ui(self):
         self.setLayout(self._layout)
@@ -68,6 +72,9 @@ class AddNewProduct(QtWidgets.QDialog):
 
     def _setup_connections(self):
         self.add_prod_btn.clicked.connect(self._on_add_product)
+
+    def apply_css(self):
+        self.setStyleSheet(get_stylesheet('products/modify_products'))
 
     def add_category(self):
         for each in self.category_names:

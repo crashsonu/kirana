@@ -5,7 +5,7 @@ import sys
 from kirana.ui.entities_ui import products_ui
 from kirana.ui.entities_ui import order_ui
 from kirana.ui.entities_ui import order_status_ui
-from tests.common_test import ModifyProducts
+from kirana.ui.entities_ui.common_test import ModifyProducts
 from PySide6 import QtWidgets
 from PySide6 import QtCore
 
