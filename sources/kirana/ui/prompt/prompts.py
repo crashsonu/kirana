@@ -63,6 +63,12 @@ def delivery_status_updated():
     msg.setWindowTitle("Updated")
     msg.exec()
 
+def field_required(field_name):
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Warning)
+    msg.setText(f"{field_name} is required!")
+    msg.setWindowTitle("Fill all the fields!")
+    msg.exec()
 
 if __name__ == '__main__':
     pass

@@ -1,13 +1,38 @@
-
+QWidget {
+    background-color: #FFFFFF;
+}
 
 
 QLineEdit {
-    border: 1px solid gray;
-    border-radius: 1px;
+    border: 1.5px solid #dcdde1;
+    border-radius: 5px;
     padding: 0 8px;
     width: 100px;
     selection-background-color: #E7FCD2;
-    font-size: 16px;}
-    QLineEdit:focus {;
-    border: 1px solid #2ecc71
+    }
+
+
+ QLineEdit:focus
+ {
+    border: 1.5px solid #4cd137;
+}
+
+QPushButton {
+    background: #00a8ff;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    padding: 5px 15px 2px 5px;
+    color: #ffffff;
+    font: bold;
+    height: 25px;
+}
+
+QComboBox {
+    border: 1.5px solid #dcdde1;
+    border-radius: 5px;
+
+}
+QComboBox:focus
+{
+    border: 1,5px solid #4cd137;
 }
