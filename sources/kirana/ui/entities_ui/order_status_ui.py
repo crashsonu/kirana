@@ -1,5 +1,4 @@
 # All Python Built-in Imports Here.
-import sys
 from PySide6 import QtWidgets, QtCore
 
 # All Custom Imports Here.
@@ -125,9 +124,10 @@ class OrderStatusUi(QtWidgets.QDialog):
 
 
 if __name__ == '__main__':
-
-    app = QtWidgets.QApplication(sys.argv)
-    inst = OrderStatusUi()
-    root = QtWidgets.QWidget()
-    inst.show()
-    app.exec()
+    pass
+    #
+    # app = QtWidgets.QApplication(sys.argv)
+    # inst = OrderStatusUi()
+    # root = QtWidgets.QWidget()
+    # inst.show()
+    # app.exec()

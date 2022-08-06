@@ -351,7 +351,7 @@ class ProductsWid(QtWidgets.QDialog):
         super(ProductsWid, self).__init__()
         self._layout = QtWidgets.QHBoxLayout()
         self._check_box = QtWidgets.QCheckBox()
-
+        self._layout.setContentsMargins(100, 25, 100, 0)
         self._check_box.setText(data['name'])
         self.id = data['id']
         size = str(data['size'])
@@ -401,10 +401,10 @@ class ModifyProducts(QtWidgets.QTabWidget):
         self._setup_ui()
 
     def _setup_ui(self):
-        # self.addTab(self.add_product_wid, "ADD NEW PRODUCT")
+        self.addTab(self.add_product_wid, "ADD NEW PRODUCT")
         self.addTab(self.delete_prod_wid, "DELETE PRODUCT")
-        # self.addTab(self.add_cat_wid, "ADD NEW CATEGORY")
-        # self.addTab(self.delete_cat_wid, "DELETE CATEGORY")
+        self.addTab(self.add_cat_wid, "ADD NEW CATEGORY")
+        self.addTab(self.delete_cat_wid, "DELETE CATEGORY")
         self.tabs = {0: 'add.png', 1: 'delete.png', 2: 'add.png', 3: 'delete.png'}
         for k, v in self.tabs.items():
             self.image_path = os.path.join(ui.IMAGES_PATH, v)
