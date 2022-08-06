@@ -221,7 +221,7 @@ class AddNewProduct(QtWidgets.QDialog):
             x.clear()
 
     def apply_stylesheet(self):
-        self.setStyleSheet(get_stylesheet('products/modify_products'))
+        self.setStyleSheet(get_stylesheet('products/add_product'))
 
 
 class DeleteProduct(QtWidgets.QDialog):
@@ -237,6 +237,7 @@ class DeleteProduct(QtWidgets.QDialog):
 
     def _initialize(self):
         self._setup_ui()
+        self.apply_stylesheet()
         self._setup_connections()
 
     def _setup_ui(self):
@@ -269,6 +270,9 @@ class DeleteProduct(QtWidgets.QDialog):
             product_ids.append(product_id)
         products.Products().delete(product_ids=product_ids)
         prompts.product_deleted()
+
+    def apply_stylesheet(self):
+        self.setStyleSheet(get_stylesheet('products/delete_product'))
 
 
 class AddNewCategory(QtWidgets.QDialog):
@@ -397,10 +401,10 @@ class ModifyProducts(QtWidgets.QTabWidget):
         self._setup_ui()
 
     def _setup_ui(self):
-        self.addTab(self.add_product_wid, "ADD NEW PRODUCT")
+        # self.addTab(self.add_product_wid, "ADD NEW PRODUCT")
         self.addTab(self.delete_prod_wid, "DELETE PRODUCT")
-        self.addTab(self.add_cat_wid, "ADD NEW CATEGORY")
-        self.addTab(self.delete_cat_wid, "DELETE CATEGORY")
+        # self.addTab(self.add_cat_wid, "ADD NEW CATEGORY")
+        # self.addTab(self.delete_cat_wid, "DELETE CATEGORY")
         self.tabs = {0: 'add.png', 1: 'delete.png', 2: 'add.png', 3: 'delete.png'}
         for k, v in self.tabs.items():
             self.image_path = os.path.join(ui.IMAGES_PATH, v)

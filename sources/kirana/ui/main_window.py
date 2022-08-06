@@ -7,7 +7,6 @@ from kirana.ui.entities_ui import order_ui
 from kirana.ui.entities_ui import order_status_ui
 from PySide6 import QtWidgets
 from PySide6 import QtCore
-from PySide6 import QtGui
 
 # All Native Imports Here.
 
@@ -36,9 +35,9 @@ class WindowKiranaManager(QtWidgets.QDialog):
         self.setLayout(self._layout)
         self._layout.addWidget(self.tab_widget)
         self.tab_widget.addTab(self._modification_wid, 'ADD OR DELETE PRODUCTS')
-        self.tab_widget.addTab(self._place_order_wid, 'PLACE ORDER')
-        self.tab_widget.addTab(self._all_orders_wid, 'ORDERS HISTORY')
-        self.tab_widget.addTab(self._add_order_status_wid, 'SET ORDER DELIVERY STATUS')
+        # self.tab_widget.addTab(self._place_order_wid, 'PLACE ORDER')
+        # self.tab_widget.addTab(self._all_orders_wid, 'ORDERS HISTORY')
+        # self.tab_widget.addTab(self._add_order_status_wid, 'SET ORDER DELIVERY STATUS')
         # self.tab_widget.addTab(self._test_wid, 'TEST TAB')
         self.setWindowState(QtCore.Qt.WindowMaximized)
         self.setWindowTitle('KIRANA MANAGER')

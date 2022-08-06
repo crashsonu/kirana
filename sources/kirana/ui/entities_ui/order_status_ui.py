@@ -125,9 +125,9 @@ class OrderStatusUi(QtWidgets.QDialog):
 
 
 if __name__ == '__main__':
-    pass
-    # app = QtWidgets.QApplication(sys.argv)
-    # inst = OrderStatusUi()
-    # root = QtWidgets.QWidget()
-    # inst.show()
-    # app.exec()
+
+    app = QtWidgets.QApplication(sys.argv)
+    inst = OrderStatusUi()
+    root = QtWidgets.QWidget()
+    inst.show()
+    app.exec()
