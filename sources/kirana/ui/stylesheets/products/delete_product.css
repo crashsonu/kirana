@@ -21,10 +21,14 @@ QCheckBox::indicator {
     height: 25px;
 }
 
-
 QCheckBox::indicator:checked
   {
     border-image: url(<image_dir>/check.png);
+  }
+
+QCheckBox::indicator:unchecked
+  {
+    border-image: url(<image_dir>/cancel.png);
   }
 
 

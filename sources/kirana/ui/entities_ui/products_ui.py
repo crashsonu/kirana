@@ -2,6 +2,7 @@
 
 # All Custom Imports Here.
 from PySide6 import QtGui
+from PySide6.QtGui import Qt
 from PySide6 import QtCore
 import os
 
@@ -280,9 +281,9 @@ class AddNewCategory(QtWidgets.QDialog):
         super(AddNewCategory, self).__init__()
         self._layout = QtWidgets.QFormLayout()
         self.add_cat_layout = QtWidgets.QFormLayout()
-        self.add_cat_label = QtWidgets.QLabel('ADD CATEGORY')
         self.category_name_label = QtWidgets.QLabel("Category Name")
         self.category_name_le = QtWidgets.QLineEdit()
+        self.category_name_le.setFixedSize(400, 40)
         self.category_name_le.setPlaceholderText('category name....')
         self.add_cat_btn = QtWidgets.QPushButton('Add Category')
 
@@ -290,12 +291,13 @@ class AddNewCategory(QtWidgets.QDialog):
 
     def _initialize(self):
         self._setup_ui()
+        self.apply_stylesheet()
         self._setup_connections()
 
     def _setup_ui(self):
         self.setLayout(self._layout)
-        self._layout.addRow(self.add_cat_label)
-        self._layout.addRow(self.category_name_label, self.category_name_le)
+        self._layout.addWidget(self.category_name_label)
+        self._layout.addWidget(self.category_name_le)
         self._layout.addWidget(self.add_cat_btn)
 
     def _setup_connections(self):
@@ -306,6 +308,9 @@ class AddNewCategory(QtWidgets.QDialog):
         products_category.ProductsCategory().insert(category_name)
         prompts.category_added()
         self.category_name_le.clear()
+
+    def apply_stylesheet(self):
+        self.setStyleSheet(get_stylesheet('products/add_category'))
 
 
 class DeleteCategory(QtWidgets.QDialog):
@@ -325,12 +330,14 @@ class DeleteCategory(QtWidgets.QDialog):
     def _initialize(self):
         self._setup_ui()
         self.add_category()
+        self.apply_stylesheet()
         self._setup_connections()
 
     def _setup_ui(self):
         self.setLayout(self._layout)
-        self._layout.addRow(self.delete_cat_label)
-        self._layout.addRow(self.del_category_name_label, self.category_combox)
+        self._layout.addWidget(self.del_category_name_label)
+        self._layout.addWidget(self.category_combox)
+        self._layout.setContentsMargins(0,50, 0, 0)
         self._layout.addWidget(self.del_cat_btn)
 
     def _setup_connections(self):
@@ -344,6 +351,9 @@ class DeleteCategory(QtWidgets.QDialog):
         category_name = self.category_combox.currentText()
         products_category.ProductsCategory().delete(category_name)
         print('Category deleted!')
+
+    def apply_stylesheet(self):
+        self.setStyleSheet(get_stylesheet('products/delete_category'))
 
 
 class ProductsWid(QtWidgets.QDialog):
@@ -394,7 +404,6 @@ class ModifyProducts(QtWidgets.QTabWidget):
         self.delete_prod_wid = DeleteProduct()
         self.add_cat_wid = AddNewCategory()
         self.delete_cat_wid = DeleteCategory()
-
         self._initialize()
 
     def _initialize(self):
