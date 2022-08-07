@@ -14,10 +14,20 @@ QPushButton {
 }
 
 QLineEdit {
-    border: .5px solid gray;
-    border-radius: 8px;
+    border: 1.5px solid #dcdde1;
+    border-radius: 5px;
     padding: 0 8px;
+    width: 100px;
     selection-background-color: #E7FCD2;
     }
-    QLineEdit:focus { background-color: #E7FCD2;
+
+ QLineEdit:focus
+ {
+    border: 1.5px solid #4cd137;
+}
+
+
+QLabel {
+    font: bold;
+    color: #353b48;
 }

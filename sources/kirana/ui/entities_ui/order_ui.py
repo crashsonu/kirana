@@ -92,7 +92,6 @@ class OrderWidget(QtWidgets.QDialog):
         self._customer_verify_button.setObjectName('CUSTOMER_VERIFY_PB')
 
         self._products_lw.setSpacing(2)
-        self.setWindowState(QtCore.Qt.WindowMaximized)
 
     def _setup_widget_connection(self):
         pass

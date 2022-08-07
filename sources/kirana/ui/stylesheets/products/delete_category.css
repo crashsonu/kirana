@@ -7,19 +7,23 @@ QPushButton {
     padding: 5px 15px 2px 5px;
     color: #ffffff;
     font: bold;
-    height: 25px;
-}
-
-QLineEdit {
-    border: .5px solid gray;
-    border-radius: 8px;
-    padding: 0 8px;
-    selection-background-color: #E7FCD2;
-    }
-    QLineEdit:focus { background-color: #E7FCD2;
 }
 
 QComboBox {
-    border: .5px solid gray;
-    border-radius: 7px;
+    border: 1.5px solid #dcdde1;
+    border-radius: 8px;
+    padding: 0 8px;
+    selection-background-color: #0097e6;
+
+    }
+
+ QComboBox:focus
+ {
+    border: 1.5px solid #4cd137;
 }
+
+QLabel {
+    font: bold;
+    color: #353b48;
+}
+

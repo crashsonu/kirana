@@ -70,5 +70,7 @@ def field_required(field_name):
     msg.setWindowTitle("Fill all the fields!")
     msg.exec()
 
+
+
 if __name__ == '__main__':
     pass

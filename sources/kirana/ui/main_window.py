@@ -6,8 +6,7 @@ from kirana.ui.entities_ui import products_ui
 from kirana.ui.entities_ui import order_ui
 from kirana.ui.entities_ui import order_status_ui
 from PySide6 import QtWidgets
-from  PySide6 import QtGui
-from PySide6 import QtCore
+from PySide6 import QtGui
 
 # All Native Imports Here.
 
@@ -18,8 +17,8 @@ from PySide6 import QtCore
 class WindowKiranaManager(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
-        self.setFixedWidth(1200)
-        self.setFixedHeight(900)
+        self.setFixedWidth(1300)
+        self.setFixedHeight(700)
         qtRectangle = self.frameGeometry()
         cp = QtGui.QGuiApplication.primaryScreen().availableGeometry().center()
         qtRectangle.moveCenter(cp)
@@ -47,7 +46,6 @@ class WindowKiranaManager(QtWidgets.QDialog):
         self.tab_widget.addTab(self._all_orders_wid, 'ORDERS HISTORY')
         self.tab_widget.addTab(self._add_order_status_wid, 'SET ORDER DELIVERY STATUS')
         # self.tab_widget.addTab(self._test_wid, 'TEST TAB')
-        self.setWindowState(QtCore.Qt.WindowMaximized)
         self.setWindowTitle('KIRANA MANAGER')
 
     def _setup_connections(self):
