@@ -34,5 +34,38 @@ QComboBox {
 }
 QComboBox:focus
 {
-    border: 1,5px solid #4cd137;
+    border: 1.5px solid #4cd137;
 }
+
+QCheckBox {
+    spacing: 25px;
+
+}
+
+QCheckBox::indicator {
+    width: 25px;
+    height: 25px;
+}
+
+QCheckBox::indicator:checked
+  {
+    border-image: url(<image_dir>/check.png);
+  }
+
+QWidget#ProductsWid {
+    background: transparent ;
+    background-color: #44bd32;
+}
+
+QListWidget{
+    border: transparent;
+
+}
+
+QListWidget::item {
+     border-style: solid;
+
+}
+
+
+

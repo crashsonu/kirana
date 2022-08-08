@@ -73,9 +73,9 @@ class BaseEntity:
 
         conn = kwargs.get('connection')
         cursor = conn.cursor()
-
+        col_name = column_name
         table_data = list()
-        if column_name is None:
+        if col_name is None:
             column_name = '*'
             cursor.execute(f'select {column_name} from {self.TABLE_NAME}')
             for each in cursor.fetchall():
@@ -135,6 +135,26 @@ class BaseEntity:
 
         cursor.close()
         return _result
+
+    @db_connection
+    def get1(self, **kwargs):
+        conn= kwargs.pop('connection')
+        cursor = conn.cursor()
+
+        _key = list(kwargs.keys())[0]
+        _str1 = list(kwargs.values())[0]
+        _str4 = tuple(_str1)
+        _str2 = str()
+        for x in _str1:
+            _str2 += x + ', '
+        _str3 = _str2.strip(', ')
+        msg = f'select id from {self.TABLE_NAME} where {_key} in {_str4}'
+        cursor.execute(msg)
+        result = []
+        for x in cursor.fetchall():
+            result.append(x[0])
+
+        return result
 
     @db_connection
     def insert(self, values_ls, **kwargs):

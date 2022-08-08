@@ -31,3 +31,36 @@ QLabel {
     font: bold;
     color: #353b48;
 }
+
+QComboBox {
+    border: 1.5px solid #dcdde1;
+    border-radius: 8px;
+    padding: 0 8px;
+    selection-background-color: #0097e6;
+
+    }
+
+ QComboBox:focus
+ {
+    border: 1.5px solid #4cd137;
+}
+
+
+QCheckBox {
+    spacing: 25px;
+}
+
+QCheckBox::indicator {
+    width: 25px;
+    height: 25px;
+}
+
+QCheckBox::indicator:checked
+  {
+    border-image: url(<image_dir>/check.png);
+  }
+
+ QListWidget::item {
+     border-style: transparent;
+
+}

@@ -119,15 +119,19 @@ class ProductWidget(QtWidgets.QWidget):
         return result
 
 
-class AddNewProduct(QtWidgets.QDialog):
+class ProductAddDelete(QtWidgets.QDialog):
     category_names = products_category.ProductsCategory().all()
     unit_names = units.Unit().all()
+    all_products = products.Products().all()
 
     def __init__(self):
-        super(AddNewProduct, self).__init__()
+        super(ProductAddDelete, self).__init__()
+        self._layout = QtWidgets.QHBoxLayout()
+
+        # add product initialized
         self._layout1 = QtWidgets.QVBoxLayout()
-        self._layout = QtWidgets.QFormLayout()
-        self._layout.setContentsMargins(300, 50, 120, 0)
+        self._add_pro_layout = QtWidgets.QFormLayout()
+        self._add_pro_layout.setContentsMargins(0, 20, 0, 0)
 
         self.add_pro_label = QtWidgets.QLabel('ADD NEW PRODUCT DETAILS')
 
@@ -155,32 +159,47 @@ class AddNewProduct(QtWidgets.QDialog):
         self.add_prod_btn = QtWidgets.QPushButton("Add Product")
         self._spacer = QtWidgets.QSpacerItem(150, 10, QtWidgets.QSizePolicy.Expanding)
 
-        self._layout.setVerticalSpacing(45)
-        self._layout.setHorizontalSpacing(20)
+        self._add_pro_layout.setVerticalSpacing(45)
+        self._add_pro_layout.setHorizontalSpacing(20)
+
+        # delete product initialized.
+        self._layout2 = QtWidgets.QVBoxLayout()
+        self.pro_chk_box = QtWidgets.QCheckBox()
+        self.pro_lw = QtWidgets.QListWidget()
+        self.del_prod_btn = QtWidgets.QPushButton("Delete Product")
 
         self._initialize()
 
     def _initialize(self):
         self._setup_ui()
-        self._setup_connections()
         self.add_category()
         self.add_unit()
-        self.apply_stylesheet()
+        self.add_all_products()
+        self._setup_connections()
 
     def _setup_ui(self):
-        self.setLayout(self._layout1)
-        self._layout1.addLayout(self._layout)
-        self._layout.addRow(self.pro_name_lb, self.prod_name_le)
-        self._layout.addRow(self.pro_cat_label, self.prod_cat_cb)
-        self._layout.addRow(self.pro_size_lb, self.prod_size_cb)
-        self._layout.addRow(self.pro_unit_lb, self.prod_unit_cb)
-        self._layout.addRow(self.pro_price_lb, self.prod_price_cb)
-        self._layout.addRow(self.pro_gst_label, self.prod_gst_le)
-
+        # add product
+        self.setLayout(self._layout)
+        self._layout.addLayout(self._layout1)
+        self._layout1.addLayout(self._add_pro_layout)
+        self._add_pro_layout.addRow(self.pro_name_lb, self.prod_name_le)
+        self._add_pro_layout.addRow(self.pro_cat_label, self.prod_cat_cb)
+        self._add_pro_layout.addRow(self.pro_size_lb, self.prod_size_cb)
+        self._add_pro_layout.addRow(self.pro_unit_lb, self.prod_unit_cb)
+        self._add_pro_layout.addRow(self.pro_price_lb, self.prod_price_cb)
+        self._add_pro_layout.addRow(self.pro_gst_label, self.prod_gst_le)
         self._layout1.addWidget(self.add_prod_btn)
+
+        # delete product
+        self._layout.addLayout(self._layout2)
+        self._layout2.addWidget(self.pro_lw)
+        self._layout2.addWidget(self.del_prod_btn)
+
+        self.apply_stylesheet()
 
     def _setup_connections(self):
         self.add_prod_btn.clicked.connect(self._on_add_product)
+        self.del_prod_btn.clicked.connect(self._on_delete_product)
 
     def add_category(self):
         for each in self.category_names:
@@ -189,6 +208,14 @@ class AddNewProduct(QtWidgets.QDialog):
     def add_unit(self):
         for each in self.unit_names:
             self.prod_unit_cb.addItem(each['name'])
+
+    def add_all_products(self):
+        for each in self.all_products:
+            product_widget = ProductsWid(each)
+            lwi = QtWidgets.QListWidgetItem()
+            lwi.setSizeHint(product_widget.sizeHint())
+            self.pro_lw.addItem(lwi)
+            self.pro_lw.setItemWidget(lwi, product_widget)
 
     def _on_add_product(self):
         name = self.prod_name_le.text()
@@ -222,45 +249,6 @@ class AddNewProduct(QtWidgets.QDialog):
         for x in line_edit_clear_list:
             x.clear()
 
-    def apply_stylesheet(self):
-        self.setStyleSheet(get_stylesheet('products/add_product'))
-
-
-class DeleteProduct(QtWidgets.QDialog):
-    def __init__(self):
-        super(DeleteProduct, self).__init__()
-        self._layout = QtWidgets.QVBoxLayout()
-        self.pro_chk_box = QtWidgets.QCheckBox()
-        self.pro_lw = QtWidgets.QListWidget()
-        self.del_prod_btn = QtWidgets.QPushButton("Delete Product")
-        self.del_pro_label = QtWidgets.QLabel('DELETE SELECTED PRODUCT')
-
-        self._initialize()
-
-    def _initialize(self):
-        self._setup_ui()
-        self.apply_stylesheet()
-        self._setup_connections()
-
-    def _setup_ui(self):
-        self.setLayout(self._layout)
-        self._layout.addWidget(self.del_pro_label)
-        self._layout.addWidget(self.pro_lw)
-        self.add_all_products()
-        self._layout.addWidget(self.del_prod_btn)
-
-    def _setup_connections(self):
-        self.del_prod_btn.clicked.connect(self._on_delete_product)
-
-    def add_all_products(self):
-        all_products = products.Products().all()
-        for each in all_products:
-            product_widget = ProductsWid(each)
-            lwi = QtWidgets.QListWidgetItem()
-            lwi.setSizeHint(product_widget.sizeHint())
-            self.pro_lw.addItem(lwi)
-            self.pro_lw.setItemWidget(lwi, product_widget)
-
     def _on_delete_product(self):
         product_ids = list()
         for i in range(self.pro_lw.count()):
@@ -274,15 +262,20 @@ class DeleteProduct(QtWidgets.QDialog):
         prompts.product_deleted()
 
     def apply_stylesheet(self):
-        self.setStyleSheet(get_stylesheet('products/delete_product'))
+        self.pro_lw.setSpacing(5)
+        self.setStyleSheet(get_stylesheet('products/add_product'))
 
 
-class AddNewCategory(QtWidgets.QDialog):
+class CatAddDelete(QtWidgets.QDialog):
+    category_names = products_category.ProductsCategory().all()
+
     def __init__(self):
-        super(AddNewCategory, self).__init__()
-        self._layout = QtWidgets.QFormLayout()
-        self._layout.setContentsMargins(400, 200, 20, 50)
-        self.add_cat_layout = QtWidgets.QFormLayout()
+        super(CatAddDelete, self).__init__()
+        self._layout = QtWidgets.QHBoxLayout()
+        # add category
+        self._add_cat_layout = QtWidgets.QFormLayout()
+        self._add_cat_layout.setContentsMargins(70, 20, 0, 0)
+
         self.category_name_label = QtWidgets.QLabel("Category Name")
         self.category_name_le = QtWidgets.QLineEdit()
         self.category_name_le.setFixedSize(400, 40)
@@ -290,22 +283,42 @@ class AddNewCategory(QtWidgets.QDialog):
         self.add_cat_btn = QtWidgets.QPushButton('Add Category')
         self.add_cat_btn.setFixedSize(400, 40)
 
+        # categories list
+
+        # delete category
+        self._del_cat_layout = QtWidgets.QFormLayout()
+        self.delete_cat_label = QtWidgets.QLabel('DELETE CATEGORY')
+        self.del_category_name_label = QtWidgets.QLabel("Select Category Name")
+        self.cat_lw = QtWidgets.QListWidget()
+        self.cat_lw.setSpacing(10)
+
+        self.del_cat_btn = QtWidgets.QPushButton('Delete Category')
+        self.del_cat_btn.setFixedSize(620, 40)
 
         self._initialize()
 
     def _initialize(self):
         self._setup_ui()
         self.apply_stylesheet()
+        self.add_category()
         self._setup_connections()
 
     def _setup_ui(self):
         self.setLayout(self._layout)
-        self._layout.addWidget(self.category_name_label)
-        self._layout.addWidget(self.category_name_le)
-        self._layout.addWidget(self.add_cat_btn)
+        self._layout.addLayout(self._add_cat_layout)
+        self._add_cat_layout.addWidget(self.category_name_label)
+        self._add_cat_layout.addWidget(self.category_name_le)
+        self._add_cat_layout.addWidget(self.add_cat_btn)
+
+        # delete category
+        self._layout.addLayout(self._del_cat_layout)
+        self._del_cat_layout.addWidget(self.del_category_name_label)
+        self._del_cat_layout.addWidget(self.cat_lw)
+        self._del_cat_layout.addWidget(self.del_cat_btn)
 
     def _setup_connections(self):
         self.add_cat_btn.clicked.connect(self._on_add_category)
+        self.del_cat_btn.clicked.connect(self._on_delete_category)
 
     def check_field(self):
         category_name_chk = self.category_name_le.text()
@@ -313,7 +326,6 @@ class AddNewCategory(QtWidgets.QDialog):
             prompts.field_required('category name')
             return False
         return True
-
 
     def _on_add_category(self):
         category_name = [self.category_name_le.text()]
@@ -324,54 +336,40 @@ class AddNewCategory(QtWidgets.QDialog):
         prompts.category_added()
         self.category_name_le.clear()
 
+    def add_category(self):
+        for each in self.category_names:
+            _cat_check_box = QtWidgets.QCheckBox(each['name'])
+            _cat_check_box.setStyleSheet('background-color: #f7f1e3; border-radius: 8px; padding: 12px;')
+            lwi = QtWidgets.QListWidgetItem()
+            lwi.setSizeHint(_cat_check_box.sizeHint())
+            self.cat_lw.addItem(lwi)
+            self.cat_lw.setItemWidget(lwi, _cat_check_box)
+
+    # @property
+    # def checked(self):
+    #     return self._check_box.isChecked()
+    #
+    # @property
+    # def chek_box_id(self):
+    #     return self.id
+
+    def _on_delete_category(self):
+        category_names = list()
+        for i in range(self.cat_lw.count()):
+            item = self.cat_lw.item(i)
+            wid = self.cat_lw.itemWidget(item)
+            _is_checked = wid.isChecked()
+            if not _is_checked:
+                continue
+
+            category_name = wid.text()
+            category_names.append(category_name)
+        category_ids = products_category.ProductsCategory().get1(name=category_names)
+        products_category.ProductsCategory().delete(product_ids=category_ids)
+        prompts.product_deleted()
 
     def apply_stylesheet(self):
         self.setStyleSheet(get_stylesheet('products/add_category'))
-
-
-class DeleteCategory(QtWidgets.QDialog):
-    category_names = products_category.ProductsCategory().all()
-
-    def __init__(self):
-        super(DeleteCategory, self).__init__()
-        self._layout = QtWidgets.QFormLayout()
-        self._layout.setContentsMargins(400, 200, 20, 50)
-        self.delete_cat_label = QtWidgets.QLabel('DELETE CATEGORY')
-        self.del_category_name_label = QtWidgets.QLabel("Select Category Name")
-        self.category_combox = QtWidgets.QComboBox()
-        self.category_combox.setFixedSize(400, 40)
-        self.category_combox.setCurrentText('select category....')
-        self.del_cat_btn = QtWidgets.QPushButton('Delete Category')
-        self.del_cat_btn.setFixedSize(400, 40)
-
-        self._initialize()
-
-    def _initialize(self):
-        self._setup_ui()
-        self.add_category()
-        self.apply_stylesheet()
-        self._setup_connections()
-
-    def _setup_ui(self):
-        self.setLayout(self._layout)
-        self._layout.addWidget(self.del_category_name_label)
-        self._layout.addWidget(self.category_combox)
-        self._layout.addWidget(self.del_cat_btn)
-
-    def _setup_connections(self):
-        self.del_cat_btn.clicked.connect(self._on_delete_category)
-
-    def add_category(self):
-        for each in self.category_names:
-            self.category_combox.addItem(each['name'])
-
-    def _on_delete_category(self):
-        category_name = self.category_combox.currentText()
-        products_category.ProductsCategory().delete(category_name)
-        print('Category deleted!')
-
-    def apply_stylesheet(self):
-        self.setStyleSheet(get_stylesheet('products/delete_category'))
 
 
 class ProductsWid(QtWidgets.QDialog):
@@ -379,7 +377,7 @@ class ProductsWid(QtWidgets.QDialog):
         super(ProductsWid, self).__init__()
         self._layout = QtWidgets.QHBoxLayout()
         self._check_box = QtWidgets.QCheckBox()
-        self._layout.setContentsMargins(100, 25, 100, 0)
+        self._layout.setContentsMargins(20, 20, 0, 0)
         self._check_box.setText(data['name'])
         self.id = data['id']
         size = str(data['size'])
@@ -397,6 +395,7 @@ class ProductsWid(QtWidgets.QDialog):
 
     def _initialize(self):
         self._setup_ui()
+        self.setStyleSheet('''background-color: #f7f1e3; border-radius: 10px; ''')
 
     def _setup_ui(self):
         self.setLayout(self._layout)
@@ -404,6 +403,9 @@ class ProductsWid(QtWidgets.QDialog):
         self._layout.addWidget(self._size)
         self._layout.addWidget(self._unit)
         self._layout.addWidget(self._price)
+        self.column_list = [self._check_box, self._size, self._unit, self._price]
+        for x in self.column_list:
+            x.setContentsMargins(60, 20, 30, 20)
 
     @property
     def checked(self):
@@ -420,10 +422,8 @@ class ModifyProducts(QtWidgets.QTabWidget):
         super(ModifyProducts, self).__init__()
         self.product_layout = QtWidgets.QHBoxLayout()
         self.category_layout = QtWidgets.QHBoxLayout()
-        self.add_product_wid = AddNewProduct()
-        self.delete_prod_wid = DeleteProduct()
-        self.add_cat_wid = AddNewCategory()
-        self.delete_cat_wid = DeleteCategory()
+        self.add_product_wid = ProductAddDelete()
+        self.add_cat_wid = CatAddDelete()
         self._initialize()
 
     def _initialize(self):
@@ -431,13 +431,9 @@ class ModifyProducts(QtWidgets.QTabWidget):
 
     def _setup_ui(self):
         self.setLayout(self.product_layout)
-        self.product_layout.addWidget(self.add_product_wid)
-        self.product_layout.addWidget(self.delete_prod_wid)
         self.addTab(self.add_product_wid, "ADD NEW PRODUCT")
-        self.addTab(self.delete_prod_wid, "DELETE PRODUCT")
         self.addTab(self.add_cat_wid, "ADD NEW CATEGORY")
-        self.addTab(self.delete_cat_wid, "DELETE CATEGORY")
-        self.tabs = {0: 'add.png', 1: 'delete.png', 2: 'add.png', 3: 'delete.png'}
+        self.tabs = {0: 'add.png', 1: 'delete.png'}
         for k, v in self.tabs.items():
             self.image_path = os.path.join(ui.IMAGES_PATH, v)
             self.setTabIcon(k, QtGui.QIcon(self.image_path))
