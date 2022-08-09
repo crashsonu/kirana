@@ -70,7 +70,12 @@ def field_required(field_name):
     msg.setWindowTitle("Fill all the fields!")
     msg.exec()
 
-
+def select_atleast_onefield():
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Warning)
+    msg.setText(f"Select at least one field for further process!")
+    msg.setWindowTitle("check at least one Field!")
+    msg.exec()
 
 if __name__ == '__main__':
     pass

@@ -283,8 +283,6 @@ class CatAddDelete(QtWidgets.QDialog):
         self.add_cat_btn = QtWidgets.QPushButton('Add Category')
         self.add_cat_btn.setFixedSize(400, 40)
 
-        # categories list
-
         # delete category
         self._del_cat_layout = QtWidgets.QFormLayout()
         self.delete_cat_label = QtWidgets.QLabel('DELETE CATEGORY')
@@ -332,6 +330,14 @@ class CatAddDelete(QtWidgets.QDialog):
         chk = self.check_field()
         if not chk:
             return
+        # add category to list widget
+        cat_check_box = QtWidgets.QCheckBox(category_name[0])
+        cat_check_box.setStyleSheet('background-color: #f7f1e3; border-radius: 8px; padding: 12px;')
+        lwi = QtWidgets.QListWidgetItem()
+        lwi.setSizeHint(cat_check_box.sizeHint())
+        self.cat_lw.addItem(lwi)
+        self.cat_lw.setItemWidget(lwi, cat_check_box)
+
         products_category.ProductsCategory().insert(category_name)
         prompts.category_added()
         self.category_name_le.clear()
@@ -345,25 +351,23 @@ class CatAddDelete(QtWidgets.QDialog):
             self.cat_lw.addItem(lwi)
             self.cat_lw.setItemWidget(lwi, _cat_check_box)
 
-    # @property
-    # def checked(self):
-    #     return self._check_box.isChecked()
-    #
-    # @property
-    # def chek_box_id(self):
-    #     return self.id
-
     def _on_delete_category(self):
         category_names = list()
-        for i in range(self.cat_lw.count()):
+        is_checked_result = list()
+        for i in reversed(range(self.cat_lw.count())):
             item = self.cat_lw.item(i)
             wid = self.cat_lw.itemWidget(item)
-            _is_checked = wid.isChecked()
-            if not _is_checked:
-                continue
+            is_checked = wid.isChecked()
+            is_checked_result.append(is_checked)
+            if is_checked:
+                self.cat_lw.takeItem(i)
+                category_name = wid.text()
+                category_names.append(category_name)
 
-            category_name = wid.text()
-            category_names.append(category_name)
+        if not True in is_checked_result:
+            prompts.select_atleast_onefield()
+            return
+
         category_ids = products_category.ProductsCategory().get1(name=category_names)
         products_category.ProductsCategory().delete(product_ids=category_ids)
         prompts.product_deleted()
