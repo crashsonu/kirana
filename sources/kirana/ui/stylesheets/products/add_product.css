@@ -29,11 +29,14 @@ QPushButton {
 
 QComboBox {
     border: 1.5px solid #dcdde1;
-    border-radius: 5px;
+    border-radius: 8px;
+    padding: 0 8px;
+    selection-background-color: #0097e6;
 
-}
-QComboBox:focus
-{
+    }
+
+ QComboBox:focus
+ {
     border: 1.5px solid #4cd137;
 }
 

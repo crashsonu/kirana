@@ -172,21 +172,29 @@ class BaseEntity:
         connection.commit()
 
     @db_connection
-    def delete(self, product_ids, **kwargs):
+    def delete(self, product_ids=None, product_names=None, **kwargs):
         connection = kwargs.pop('connection')
         cursor = connection.cursor()
 
-        if len(product_ids) == 1:
-            msg = f"delete from {self.TABLE_NAME} where id = {product_ids[0]}"
+        if product_ids:
+            if len(product_ids) == 1:
+                msg = f"delete from {self.TABLE_NAME} where id = {product_ids[0]}"
+                cursor.execute(msg)
+                connection.commit()
+                print('deleted!!')
+                return
+
+            msg = f"delete from {self.TABLE_NAME} where id IN {tuple(product_ids)}"
             cursor.execute(msg)
             connection.commit()
             print('deleted!!')
-            return
 
-        msg = f"delete from {self.TABLE_NAME} where id IN {tuple(product_ids)}"
-        cursor.execute(msg)
-        connection.commit()
-        print('deleted!!')
+        if product_names:
+            msg = f"delete from {self.TABLE_NAME} where name IN {tuple(product_names)}"
+            cursor.execute(msg)
+            connection.commit()
+            print('deleted!!')
+
 
 
 if __name__ == '__main__':

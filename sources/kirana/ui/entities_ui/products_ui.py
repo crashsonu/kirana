@@ -244,21 +244,37 @@ class ProductAddDelete(QtWidgets.QDialog):
         values_ls.append((name, category_id[0], price, gst, size, unit_id[0]))
 
         products.Products().insert(values_ls[0])
+
+        data_dict = {'name': name, 'size': size, 'price': price, 'unit_id': unit_id[0]}
+        product_widget = ProductsWid(data_dict)
+        lwi = QtWidgets.QListWidgetItem()
+        lwi.setSizeHint(product_widget.sizeHint())
+        self.pro_lw.addItem(lwi)
+
         prompts.product_added()
+
+        self.pro_lw.setItemWidget(lwi, product_widget)
         line_edit_clear_list = [self.prod_name_le, self.prod_gst_le, self.prod_size_cb, self.prod_price_cb]
         for x in line_edit_clear_list:
             x.clear()
 
     def _on_delete_product(self):
-        product_ids = list()
-        for i in range(self.pro_lw.count()):
+        product_names = list()
+        is_checked_result = list()
+        for i in reversed(range(self.pro_lw.count())):
             item = self.pro_lw.item(i)
             wid = self.pro_lw.itemWidget(item)
-            if not wid.checked:
-                continue
-            product_id = wid.chek_box_id
-            product_ids.append(product_id)
-        products.Products().delete(product_ids=product_ids)
+            is_checked_result.append(wid.checked)
+            if wid.checked:
+                self.pro_lw.takeItem(i)
+                product_name = wid.check_box_text
+                product_names.append(product_name)
+
+        if not True in is_checked_result:
+            prompts.select_atleast_onefield()
+            return
+
+        products.Products().delete(product_names=product_names)
         prompts.product_deleted()
 
     def apply_stylesheet(self):
@@ -383,7 +399,6 @@ class ProductsWid(QtWidgets.QDialog):
         self._check_box = QtWidgets.QCheckBox()
         self._layout.setContentsMargins(20, 20, 0, 0)
         self._check_box.setText(data['name'])
-        self.id = data['id']
         size = str(data['size'])
         self._size = QtWidgets.QLabel()
         unit_id = data['unit_id']
@@ -416,8 +431,8 @@ class ProductsWid(QtWidgets.QDialog):
         return self._check_box.isChecked()
 
     @property
-    def chek_box_id(self):
-        return self.id
+    def check_box_text(self):
+        return self._check_box.text()
 
 
 class ModifyProducts(QtWidgets.QTabWidget):
