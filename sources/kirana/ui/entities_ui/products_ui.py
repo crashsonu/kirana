@@ -166,6 +166,7 @@ class ProductAddDelete(QtWidgets.QDialog):
         self._layout2 = QtWidgets.QVBoxLayout()
         self.pro_chk_box = QtWidgets.QCheckBox()
         self.pro_lw = QtWidgets.QListWidget()
+        self.pro_lw.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         self.del_prod_btn = QtWidgets.QPushButton("Delete Product")
 
         self._initialize()
@@ -278,7 +279,7 @@ class ProductAddDelete(QtWidgets.QDialog):
         prompts.product_deleted()
 
     def apply_stylesheet(self):
-        self.pro_lw.setSpacing(5)
+        self.pro_lw.setSpacing(3)
         self.setStyleSheet(get_stylesheet('products/add_product'))
 
 
@@ -304,7 +305,7 @@ class CatAddDelete(QtWidgets.QDialog):
         self.delete_cat_label = QtWidgets.QLabel('DELETE CATEGORY')
         self.del_category_name_label = QtWidgets.QLabel("Select Category Name")
         self.cat_lw = QtWidgets.QListWidget()
-        self.cat_lw.setSpacing(10)
+        self.cat_lw.setSpacing(3)
 
         self.del_cat_btn = QtWidgets.QPushButton('Delete Category')
         self.del_cat_btn.setFixedSize(620, 40)
@@ -348,7 +349,7 @@ class CatAddDelete(QtWidgets.QDialog):
             return
         # add category to list widget
         cat_check_box = QtWidgets.QCheckBox(category_name[0])
-        cat_check_box.setStyleSheet('background-color: #f7f1e3; border-radius: 8px; padding: 12px;')
+        cat_check_box.setStyleSheet('background-color: #fad390; border-radius: 8px; padding: 12px;')
         lwi = QtWidgets.QListWidgetItem()
         lwi.setSizeHint(cat_check_box.sizeHint())
         self.cat_lw.addItem(lwi)
@@ -361,7 +362,7 @@ class CatAddDelete(QtWidgets.QDialog):
     def add_category(self):
         for each in self.category_names:
             _cat_check_box = QtWidgets.QCheckBox(each['name'])
-            _cat_check_box.setStyleSheet('background-color: #f7f1e3; border-radius: 8px; padding: 12px;')
+            _cat_check_box.setStyleSheet('background-color: #fad390; border-radius: 8px; padding: 12px;')
             lwi = QtWidgets.QListWidgetItem()
             lwi.setSizeHint(_cat_check_box.sizeHint())
             self.cat_lw.addItem(lwi)
@@ -397,7 +398,7 @@ class ProductsWid(QtWidgets.QDialog):
         super(ProductsWid, self).__init__()
         self._layout = QtWidgets.QHBoxLayout()
         self._check_box = QtWidgets.QCheckBox()
-        self._layout.setContentsMargins(20, 20, 0, 0)
+        self._layout.setContentsMargins(20, 10, 0, 0)
         self._check_box.setText(data['name'])
         size = str(data['size'])
         self._size = QtWidgets.QLabel()
@@ -414,7 +415,7 @@ class ProductsWid(QtWidgets.QDialog):
 
     def _initialize(self):
         self._setup_ui()
-        self.setStyleSheet('''background-color: #f7f1e3; border-radius: 10px; ''')
+        self.setStyleSheet('''background-color: #fad390; border-radius: 10px; ''')
 
     def _setup_ui(self):
         self.setLayout(self._layout)
@@ -424,7 +425,7 @@ class ProductsWid(QtWidgets.QDialog):
         self._layout.addWidget(self._price)
         self.column_list = [self._check_box, self._size, self._unit, self._price]
         for x in self.column_list:
-            x.setContentsMargins(60, 20, 30, 20)
+            x.setContentsMargins(60, 5, 30, 20)
 
     @property
     def checked(self):

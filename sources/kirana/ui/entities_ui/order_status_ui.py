@@ -1,5 +1,6 @@
 # All Python Built-in Imports Here.
 from PySide6 import QtWidgets, QtCore
+from pprint import pprint
 
 # All Custom Imports Here.
 from kirana.db import db_connection
@@ -14,7 +15,8 @@ from kirana.db.entities.order_status import OrderStatus
 # All Attributes or Constants Here.
 
 class OrdersStatusWidget(QtWidgets.QTableWidget):
-    MAPPED_HEADERS = {'delivery_status': 0, 'order_id': 1, 'customer_name': 2, 'address': 3, 'products': 4, 'ordered_on': 5,
+    MAPPED_HEADERS = {'delivery_status': 0, 'order_id': 1, 'customer_name': 2, 'address': 3, 'products': 4,
+                      'ordered_on': 5,
                       }
 
     def __init__(self):
@@ -46,7 +48,7 @@ class OrdersStatusWidget(QtWidgets.QTableWidget):
 
     def add_orders(self):
         for each in self.all_orders:
-            self._order_id = each['id']
+            _order_id = each['id']
             _customer_id = each['customer_id']
             _customer_name = Customer().get(return_fields=['first_name', 'last_name'], id=_customer_id)
             _customer_address = Customer().get(return_fields='address', id=_customer_id)
@@ -54,7 +56,7 @@ class OrdersStatusWidget(QtWidgets.QTableWidget):
             del each['customer_id']
             del each['id']
             del each['ordered_on']
-            each['order_id'] = str(self._order_id)
+            each['order_id'] = str(_order_id)
             each['customer_name'] = _customer_name
             each['address'] = _customer_address
             each['ordered_on'] = str(_order_date)
@@ -79,6 +81,7 @@ class OrdersStatusWidget(QtWidgets.QTableWidget):
                         continue
                     self.orders_status_name = x['name']
                 self._combox.setCurrentText(self.orders_status_name)
+
 
 
 class OrderStatusUi(QtWidgets.QDialog):
@@ -120,7 +123,6 @@ class OrderStatusUi(QtWidgets.QDialog):
             cursor.execute(msg)
             connection.commit()
         prompts.delivery_status_updated()
-
 
 
 if __name__ == '__main__':

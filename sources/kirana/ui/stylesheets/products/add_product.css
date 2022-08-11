@@ -2,9 +2,13 @@ QWidget {
     background-color: #FFFFFF;
 }
 
+QLabel{
+    background: transparent;
+
+}
 
 QLineEdit {
-    border: 1.5px solid #dcdde1;
+    border: 1.5px solid #7f8c8d;
     border-radius: 5px;
     padding: 0 8px;
     width: 100px;
@@ -14,7 +18,7 @@ QLineEdit {
 
  QLineEdit:focus
  {
-    border: 1.5px solid #4cd137;
+    border: 1.5px solid #2ecc71;
 }
 
 QPushButton {
@@ -28,7 +32,7 @@ QPushButton {
 }
 
 QComboBox {
-    border: 1.5px solid #dcdde1;
+    border: 1.5px solid #7f8c8d;
     border-radius: 8px;
     padding: 0 8px;
     selection-background-color: #0097e6;
@@ -37,11 +41,12 @@ QComboBox {
 
  QComboBox:focus
  {
-    border: 1.5px solid #4cd137;
+    border: 1.5px solid #2ecc71;
 }
 
 QCheckBox {
     spacing: 25px;
+    background: transparent;
 
 }
 
@@ -56,8 +61,6 @@ QCheckBox::indicator:checked
   }
 
 QWidget#ProductsWid {
-    background: transparent ;
-    background-color: #44bd32;
 }
 
 QListWidget{
